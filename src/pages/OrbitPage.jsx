@@ -20,7 +20,7 @@ export default function OrbitPage() {
   }, [launchId])
 
   return (
-    <div style={{ width: '100vw', height: '100vh', background: '#000', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 100 }}>
 
       {/* Top overlay bar */}
       <div

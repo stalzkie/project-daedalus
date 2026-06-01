@@ -349,8 +349,8 @@ export default function OrbitViewer({
 
   return (
     <div style={{ position: 'relative', height: fullscreen ? '100vh' : height, width: '100%', background: '#000' }}>
-      {/* Cesium canvas */}
-      <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
+      {/* Cesium canvas — absolute so it fills the parent without relying on height inheritance */}
+      <div ref={containerRef} style={{ position: 'absolute', inset: 0 }} />
 
       {/* Controls overlay */}
       <div style={{ position: 'absolute', bottom: 12, left: 12, right: 12, pointerEvents: 'none' }}>
