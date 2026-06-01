@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #0B1F4B;
+  --accent: #1B6CA8;
+  --accent-light: #2585cc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: #0B1F4B;
+  color: #ffffff;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d2257;
+}
+::-webkit-scrollbar-thumb {
+  background: #1B6CA8;
+  border-radius: 3px;
+}
+
+/* Leaflet map */
+.leaflet-container {
+  background: #0d2257 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+.leaflet-popup-content-wrapper {
+  background: #102a68 !important;
+  color: #fff !important;
+  border: 1px solid #1B6CA8 !important;
+  border-radius: 4px !important;
+}
+.leaflet-popup-tip {
+  background: #1B6CA8 !important;
+}
+.leaflet-tile-pane {
+  filter: brightness(0.6) saturate(0.4) hue-rotate(195deg);
+}
+
+/* Terminal-style status log */
+.terminal-line {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  border-bottom: 1px solid rgba(27, 108, 168, 0.15);
+  padding: 2px 0;
+}
+.terminal-line:last-child {
+  border-bottom: none;
+}
+
+/* Panel grid */
+.panel {
+  background: rgba(13, 34, 87, 0.6);
+  border: 1px solid rgba(27, 108, 168, 0.35);
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+}
+
+/* Horizontal scroll strip */
+.launch-strip {
+  scrollbar-width: thin;
+  scrollbar-color: #1B6CA8 #0d2257;
+}
+
+/* KaTeX dark theme — render white formulas on dark backgrounds */
+.katex-dark .katex,
+.katex-dark .katex * {
+  color: #e2e8f0 !important;
+}
+.katex-dark .katex-display {
+  margin: 0.25em 0;
+}
+
+/* React-datepicker dark theme */
+.react-datepicker {
+  background: #0d2257 !important;
+  border: 1px solid rgba(27,108,168,0.4) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+}
+.react-datepicker__header {
+  background: #102a68 !important;
+  border-bottom: 1px solid rgba(27,108,168,0.3) !important;
+}
+.react-datepicker__current-month,
+.react-datepicker__day-name,
+.react-datepicker-time__header {
+  color: #9CA3AF !important;
+}
+.react-datepicker__day {
+  color: #fff !important;
+}
+.react-datepicker__day:hover {
+  background: rgba(27,108,168,0.3) !important;
+}
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background: #1B6CA8 !important;
+  color: #fff !important;
+}
+.react-datepicker__day--outside-month {
+  color: #374151 !important;
+}
+.react-datepicker__navigation-icon::before {
+  border-color: #9CA3AF !important;
+}
+.react-datepicker-popper {
+  z-index: 100 !important;
+}
+
+/* Tooltip */
+.ds-tooltip {
+  position: relative;
+}
+.ds-tooltip:hover .ds-tooltip-content {
+  display: block;
+}
+.ds-tooltip-content {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  min-width: 220px;
+  z-index: 50;
+  background: #0d2257;
+  border: 1px solid #1B6CA8;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  pointer-events: none;
+}

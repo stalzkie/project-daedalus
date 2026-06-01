@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+*.local
+server/cache-data/*.json
+server/logs/*.log
+public/cesium/
