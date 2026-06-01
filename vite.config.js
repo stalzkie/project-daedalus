@@ -23,11 +23,19 @@ export default defineConfig({
     // cesium and satellite.js use top-level await / dynamic imports that esbuild
     // can't handle at ES2020 — serve them as raw ESM from node_modules.
     exclude: ['cesium', 'satellite.js'],
-    // mersenne-twister is a CJS dependency of satellite.js.  Because satellite.js
-    // is excluded from pre-bundling, Vite never converts mersenne-twister's
-    // module.exports to an ESM default export — explicitly including it here
-    // makes Vite pre-bundle it (CJS→ESM) so the default import resolves.
-    include: ['mersenne-twister'],
+    // Their CJS transitive dependencies are not pre-bundled either when the
+    // parents are excluded.  Explicitly including each one forces Vite to
+    // convert module.exports → ESM default so imports resolve correctly.
+    include: [
+      'mersenne-twister',
+      'urijs',
+      'bitmap-sdf',
+      'draco3d',
+      'grapheme-splitter',
+      'lerc',
+      'protobufjs',
+      'commander',
+    ],
   },
   build: {
     target: 'esnext',   // satellite.js v7 WASM build uses top-level await
