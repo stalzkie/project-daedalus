@@ -207,22 +207,6 @@ export default function OrbitViewer({
       })
     })
 
-    // ── d. Orbital plane disc ──────────────────────────────────────────
-    const halfEllipse = build_orbital_ellipse_points(elems, epoch_ms, 180)
-    const center      = ecefToCartesian3({ x: 0, y: 0, z: 0 })
-    const planePositions = [
-      center,
-      ...halfEllipse.map(ecefToCartesian3),
-    ]
-    viewer.entities.add({
-      polygon: {
-        hierarchy: new Cesium.PolygonHierarchy(planePositions),
-        material: Cesium.Color.fromCssColorString('#1B6CA8').withAlpha(0.07),
-        perPositionHeight: true,
-        arcType: Cesium.ArcType.NONE,
-      },
-    })
-
     // ── e. Ascending node (RAAN crossing) ─────────────────────────────
     const raanLng = elems.raan_deg
     viewer.entities.add({
