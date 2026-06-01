@@ -92,6 +92,12 @@ export default function OrbitViewer({
         ),
         terrainProvider: new Cesium.EllipsoidTerrainProvider(),
       })
+      // Point straight down at Earth from 20 Mm so the first frame always
+      // shows the globe rather than the sky/atmosphere.
+      viewer.camera.setView({
+        destination: Cesium.Cartesian3.fromDegrees(0, 20, 20_000_000),
+        orientation: { heading: 0, pitch: Cesium.Math.toRadians(-90), roll: 0 },
+      })
       viewerRef.current = viewer
       setInitDone(true)
     } catch (err) {
@@ -256,16 +262,16 @@ export default function OrbitViewer({
       satEntityRef.current = satEnt
     }
 
-    // ── Camera: fly to orbital altitude ──────────────────────────────
-    const orbitAlt_m  = ((elems.apogee_km + elems.perigee_km) / 2 + elems.sma_km * 0.2) * 1000
-    viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(0, 0, orbitAlt_m * 2.5),
-      orientation: {
-        heading: Cesium.Math.toRadians(0),
-        pitch:   Cesium.Math.toRadians(-60),
-        roll:    0,
-      },
-      duration: 2,
+    // ── Camera: zoom to fit all entities automatically ────────────────
+    // viewer.flyTo computes the bounding sphere of all entities so the
+    // camera is always positioned correctly regardless of orbit type.
+    viewer.flyTo(viewer.entities, {
+      duration: 1.5,
+      offset: new Cesium.HeadingPitchRange(
+        0,
+        Cesium.Math.toRadians(-55),
+        0  // distance auto-computed from bounding sphere
+      ),
     })
   }, [initDone, orbitData])
 
@@ -316,14 +322,12 @@ export default function OrbitViewer({
   // ─── Reset camera ────────────────────────────────────────────────────────
 
   const resetCamera = useCallback(() => {
-    if (!viewerRef.current || !elements) return
-    const alt = ((elements.apogee_km + elements.perigee_km) / 2 + elements.sma_km * 0.2) * 2500
-    viewerRef.current.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(0, 0, alt),
-      orientation: { heading: 0, pitch: Cesium.Math.toRadians(-60), roll: 0 },
+    if (!viewerRef.current) return
+    viewerRef.current.flyTo(viewerRef.current.entities, {
       duration: 1.5,
+      offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-55), 0),
     })
-  }, [elements])
+  }, [])
 
   // ─── Export screenshot ───────────────────────────────────────────────────
 
