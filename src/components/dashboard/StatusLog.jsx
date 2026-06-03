@@ -2,12 +2,12 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import DataSourceTag from './DataSourceTag'
 
 const LOG_LEVEL_COLOR = {
-  INFO:  'text-blue-400',
-  GO:    'text-green-400',
-  HOLD:  'text-red-400',
-  WARN:  'text-yellow-400',
-  SYS:   'text-gray-500',
-  DATA:  'text-cyan-400',
+  INFO:  'text-blue-600',
+  GO:    'text-green-600',
+  HOLD:  'text-red-600',
+  WARN:  'text-yellow-600',
+  SYS:   'text-gray-400',
+  DATA:  'text-cyan-600',
 }
 
 function buildInitialLog(launch) {
@@ -110,18 +110,18 @@ export default function StatusLog({ launch, fetchedAt }) {
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto bg-black/30 rounded border border-accent/20 p-2"
+        className="flex-1 overflow-y-auto bg-[#F8FAFC] rounded border border-[rgba(0,0,0,0.07)] p-2"
         style={{ minHeight: 180, maxHeight: 280, fontFamily: 'JetBrains Mono, Fira Code, monospace' }}
       >
         {entries.map((e) => (
           <div key={e.id} className="terminal-line flex gap-2">
-            <span className="text-gray-600 text-[10px] shrink-0 select-none">
+            <span className="text-gray-400 text-[10px] shrink-0 select-none">
               {new Date(e.ts).toISOString().substring(11, 23)}
             </span>
             <span className={`text-[10px] font-bold shrink-0 w-10 ${LOG_LEVEL_COLOR[e.level] || 'text-gray-400'}`}>
               {e.level}
             </span>
-            <span className="text-[11px] text-gray-300 break-all">{e.msg}</span>
+            <span className="text-[11px] text-gray-600 break-all">{e.msg}</span>
           </div>
         ))}
       </div>
@@ -133,7 +133,7 @@ export default function StatusLog({ launch, fetchedAt }) {
             setAutoScroll(true)
             if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight
           }}
-          className="mt-1 text-[10px] font-mono text-accent hover:text-white text-right"
+          className="mt-1 text-[10px] font-mono text-accent hover:text-[#1A1F36] text-right"
         >
           ↓ scroll to latest
         </button>

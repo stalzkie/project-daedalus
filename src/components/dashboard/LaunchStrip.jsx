@@ -7,10 +7,10 @@ const AGENCY_FLAG = {
 }
 
 const STATUS_STYLE = {
-  Go:   { bg: 'bg-green-700/80',  border: 'border-green-500',  text: 'text-green-200' },
-  Hold: { bg: 'bg-red-800/80',    border: 'border-red-500',    text: 'text-red-200'   },
-  TBD:  { bg: 'bg-gray-700/80',   border: 'border-gray-500',   text: 'text-gray-300'  },
-  TBC:  { bg: 'bg-yellow-800/80', border: 'border-yellow-500', text: 'text-yellow-200'},
+  Go:   { bg: 'bg-green-100',   border: 'border-green-400',  text: 'text-green-700' },
+  Hold: { bg: 'bg-red-100',     border: 'border-red-400',    text: 'text-red-700'   },
+  TBD:  { bg: 'bg-gray-100',    border: 'border-gray-400',   text: 'text-gray-600'  },
+  TBC:  { bg: 'bg-yellow-100',  border: 'border-yellow-400', text: 'text-yellow-700'},
 }
 
 function tMinus(netISO) {
@@ -44,8 +44,8 @@ function StripCard({ launch, isActive, onClick }) {
         flex flex-col gap-1 p-3 rounded min-w-[180px] max-w-[180px] text-left
         border transition-all shrink-0 cursor-pointer
         ${isActive
-          ? 'border-accent bg-accent/20 shadow-[0_0_12px_rgba(27,108,168,0.4)]'
-          : 'border-[rgba(27,108,168,0.3)] bg-[rgba(13,34,87,0.5)] hover:border-accent/60 hover:bg-accent/10'
+          ? 'border-accent bg-accent/10 shadow-sm ring-1 ring-accent/30'
+          : 'border-[rgba(27,108,168,0.2)] bg-white hover:border-accent/50 hover:bg-[#F0F7FF]'
         }
       `}
     >
@@ -56,15 +56,15 @@ function StripCard({ launch, isActive, onClick }) {
         <span className="text-lg leading-none" title={launch.launch_service_provider?.name}>{flag}</span>
       </div>
 
-      <div className="text-[11px] font-semibold text-white leading-snug line-clamp-2" title={launch.name}>
+      <div className="text-[11px] font-semibold text-[#1A1F36] leading-snug line-clamp-2" title={launch.name}>
         {missionName}
       </div>
 
-      <div className="text-[10px] text-gray-400 truncate" title={launch.rocket?.configuration?.name}>
+      <div className="text-[10px] text-gray-500 truncate" title={launch.rocket?.configuration?.name}>
         {launch.rocket?.configuration?.name || '—'}
       </div>
 
-      <div className={`font-mono text-[11px] font-semibold ${abbrev === 'Go' ? 'text-green-300' : 'text-gray-300'}`}>
+      <div className={`font-mono text-[11px] font-semibold ${abbrev === 'Go' ? 'text-green-600' : 'text-gray-500'}`}>
         {countdown}
       </div>
     </button>

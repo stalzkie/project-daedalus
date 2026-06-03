@@ -18,9 +18,9 @@ const CustomTooltip = ({ active, payload }) => {
   const { name, value } = payload[0]
   return (
     <div className="rounded border px-3 py-2 text-[11px] font-mono shadow-xl"
-         style={{ background: '#0d2257', borderColor: '#B91C1C40' }}>
-      <div className="text-white font-bold mb-0.5">{name}</div>
-      <div className="text-gray-400">{value} events</div>
+         style={{ background: '#FFFFFF', borderColor: '#B91C1C40' }}>
+      <div className="text-[#1A1F36] font-bold mb-0.5">{name}</div>
+      <div className="text-gray-600">{value} events</div>
     </div>
   )
 }
@@ -78,7 +78,7 @@ export default function FailureTaxonomyChart({ stats, fetchedAt }) {
               return (
                 <div key={d.name} className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full shrink-0" style={{ background: color }} />
-                  <span className="text-[10px] font-mono text-gray-300 flex-1 truncate">{d.name}</span>
+                  <span className="text-[10px] font-mono text-gray-600 flex-1 truncate">{d.name}</span>
                   <span className="text-[10px] font-mono font-bold shrink-0" style={{ color }}>
                     {d.value}
                   </span>

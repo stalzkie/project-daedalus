@@ -4,10 +4,10 @@ import 'katex/dist/katex.min.css'
 import WorkingSteps from './WorkingSteps'
 
 const RESULT_COLOR = {
-  green:   'text-green-400',
-  yellow:  'text-yellow-400',
-  danger:  'text-red-400',
-  neutral: 'text-white',
+  green:   'text-green-600',
+  yellow:  'text-yellow-600',
+  danger:  'text-red-600',
+  neutral: 'text-[#1A1F36]',
 }
 
 function KatexFormula({ latex }) {
@@ -20,7 +20,7 @@ function KatexFormula({ latex }) {
   }, [latex])
   return (
     <div
-      className="katex-dark text-center py-2 overflow-x-auto"
+      className="text-center py-2 overflow-x-auto"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )
@@ -103,7 +103,7 @@ const FormulaCard = forwardRef(function FormulaCard(
       </div>
 
       {/* KaTeX formula */}
-      <div className="bg-black/30 border border-accent/10 rounded px-2">
+      <div className="bg-[#EDF1F7] border border-[rgba(27,108,168,0.12)] rounded px-2">
         <KatexFormula latex={config.latex} />
       </div>
 
@@ -120,9 +120,9 @@ const FormulaCard = forwardRef(function FormulaCard(
                 step="any"
                 value={values[inp.key]}
                 onChange={e => handleChange(inp.key, e.target.value)}
-                className={`flex-1 min-w-0 bg-navy-800/60 border rounded-l px-2 py-1.5 text-[12px] font-mono
-                  text-white focus:outline-none focus:border-accent transition-colors
-                  ${errors[inp.key] ? 'border-red-500 bg-red-900/10' : 'border-accent/30 hover:border-accent/50'}`}
+                className={`flex-1 min-w-0 bg-white border rounded-l px-2 py-1.5 text-[12px] font-mono
+                  text-[#1A1F36] focus:outline-none focus:border-accent transition-colors
+                  ${errors[inp.key] ? 'border-red-400 bg-red-50' : 'border-[rgba(27,108,168,0.25)] hover:border-accent/60'}`}
               />
               <span className="shrink-0 bg-accent/15 border border-l-0 border-accent/30 rounded-r
                 px-2 py-1.5 text-[10px] font-mono text-accent whitespace-nowrap">
@@ -130,7 +130,7 @@ const FormulaCard = forwardRef(function FormulaCard(
               </span>
             </div>
             {errors[inp.key] && (
-              <div className="text-red-400 text-[9px] font-mono mt-0.5">{errors[inp.key]}</div>
+              <div className="text-red-600 text-[9px] font-mono mt-0.5">{errors[inp.key]}</div>
             )}
           </div>
         ))}
@@ -148,7 +148,7 @@ const FormulaCard = forwardRef(function FormulaCard(
 
       {/* Result */}
       {result != null && resultValue != null && (
-        <div className="bg-black/20 border border-accent/20 rounded p-3">
+        <div className="bg-[#F1F5F9] border border-[rgba(27,108,168,0.15)] rounded p-3">
           <div className="flex items-baseline gap-2">
             <span className="text-[10px] font-mono text-gray-500">{config.resultLabel} =</span>
             <span className={`font-mono text-2xl font-bold ${colorClass}`}>

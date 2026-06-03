@@ -9,12 +9,12 @@ import {
 const columnHelper = createColumnHelper()
 
 const STATUS_BADGE = {
-  Success:           'bg-green-900/50 text-green-400 border-green-700',
-  Failure:           'bg-red-900/50 text-red-400 border-red-700',
-  'Partial Failure': 'bg-orange-900/50 text-orange-400 border-orange-700',
-  Go:                'bg-green-900/50 text-green-400 border-green-700',
-  Hold:              'bg-red-900/50 text-red-400 border-red-700',
-  TBD:               'bg-gray-800 text-gray-400 border-gray-600',
+  Success:           'bg-green-50 text-green-700 border-green-300',
+  Failure:           'bg-red-50 text-red-700 border-red-300',
+  'Partial Failure': 'bg-orange-50 text-orange-700 border-orange-300',
+  Go:                'bg-green-50 text-green-700 border-green-300',
+  Hold:              'bg-red-50 text-red-700 border-red-300',
+  TBD:               'bg-gray-100 text-gray-600 border-gray-300',
 }
 
 function OutcomeBadge({ status }) {
@@ -88,7 +88,7 @@ export default function LaunchHistoryTable({
     columnHelper.accessor('name', {
       header: 'Mission',
       cell: info => (
-        <span className="text-[11px] font-medium text-white max-w-[220px] block truncate" title={info.getValue()}>
+        <span className="text-[11px] font-medium text-[#1A1F36] max-w-[220px] block truncate" title={info.getValue()}>
           {info.getValue() || '—'}
         </span>
       ),
@@ -98,14 +98,14 @@ export default function LaunchHistoryTable({
     columnHelper.accessor(row => row.rocket?.configuration?.name, {
       id: 'rocket',
       header: 'Vehicle',
-      cell: info => <span className="text-[11px] text-gray-300 font-mono">{info.getValue() || '—'}</span>,
+      cell: info => <span className="text-[11px] text-gray-600 font-mono">{info.getValue() || '—'}</span>,
       enableSorting: true,
     }),
 
     columnHelper.accessor(row => row.launch_service_provider?.name, {
       id: 'agency',
       header: 'Agency',
-      cell: info => <span className="text-[11px] text-gray-300 max-w-[140px] block truncate">{info.getValue() || '—'}</span>,
+      cell: info => <span className="text-[11px] text-gray-600 max-w-[140px] block truncate">{info.getValue() || '—'}</span>,
       enableSorting: true,
     }),
 
@@ -125,7 +125,7 @@ export default function LaunchHistoryTable({
       header: 'LEO Cap. (kg)',
       cell: info => {
         const v = info.getValue()
-        return <span className="font-mono text-[11px] text-gray-400">{v != null ? v.toLocaleString() : '—'}</span>
+        return <span className="font-mono text-[11px] text-gray-500">{v != null ? v.toLocaleString() : '—'}</span>
       },
       enableSorting: false,
     }),
@@ -177,7 +177,7 @@ export default function LaunchHistoryTable({
             {total != null ? `${total.toLocaleString()} total` : '—'}
           </span>
           {selectedCount > 0 && (
-            <span className="text-[10px] font-mono text-yellow-400">
+            <span className="text-[10px] font-mono text-yellow-600">
               {selectedCount}/5 selected for comparison
             </span>
           )}
@@ -186,13 +186,13 @@ export default function LaunchHistoryTable({
           <button
             type="button"
             onClick={() => setShowColToggle(s => !s)}
-            className="text-[10px] font-mono text-gray-400 hover:text-white px-2 py-1 border border-accent/20 rounded hover:border-accent/50 transition-colors"
+            className="text-[10px] font-mono text-gray-500 hover:text-[#1A1F36] px-2 py-1 border border-accent/20 rounded hover:border-accent/50 hover:bg-gray-50 transition-colors"
           >
             Columns ▾
           </button>
           {showColToggle && (
-            <div className="absolute right-0 top-full mt-1 bg-navy-800 border border-accent/30 rounded p-2 z-10 min-w-[140px] shadow-xl"
-                 style={{ background: '#0d2257' }}>
+            <div className="absolute right-0 top-full mt-1 border border-[rgba(27,108,168,0.2)] rounded p-2 z-10 min-w-[140px] shadow-lg"
+                 style={{ background: '#FFFFFF' }}>
               {table.getAllLeafColumns().filter(c => c.id !== 'select').map(col => (
                 <label key={col.id} className="flex items-center gap-2 py-0.5 cursor-pointer">
                   <input
@@ -201,7 +201,7 @@ export default function LaunchHistoryTable({
                     onChange={col.getToggleVisibilityHandler()}
                     className="accent-accent"
                   />
-                  <span className="text-[11px] text-gray-300">{col.columnDef.header}</span>
+                  <span className="text-[11px] text-gray-600">{col.columnDef.header}</span>
                 </label>
               ))}
             </div>
@@ -223,7 +223,7 @@ export default function LaunchHistoryTable({
                   >
                     {header.isPlaceholder ? null : (
                       <div
-                        className={`flex items-center gap-1 ${header.column.getCanSort() ? 'cursor-pointer hover:text-white' : ''}`}
+                        className={`flex items-center gap-1 ${header.column.getCanSort() ? 'cursor-pointer hover:text-[#1A1F36]' : ''}`}
                         onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
@@ -241,7 +241,7 @@ export default function LaunchHistoryTable({
               <tr
                 key={row.id}
                 className={`border-b border-accent/10 cursor-pointer transition-colors
-                  ${row.getIsSelected() ? 'bg-accent/10' : 'hover:bg-white/5'}`}
+                  ${row.getIsSelected() ? 'bg-accent/10' : 'hover:bg-[rgba(27,108,168,0.04)]'}`}
                 onClick={() => onRowClick(row.original)}
               >
                 {row.getVisibleCells().map(cell => (
@@ -279,7 +279,7 @@ export default function LaunchHistoryTable({
               type="button"
               onClick={btn.action}
               disabled={btn.disabled}
-              className="w-7 h-7 flex items-center justify-center font-mono text-[12px] rounded border border-accent/20 text-gray-400 hover:text-white hover:border-accent/50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="w-7 h-7 flex items-center justify-center font-mono text-[12px] rounded border border-accent/20 text-gray-500 hover:text-[#1A1F36] hover:bg-gray-50 hover:border-accent/50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               {btn.label}
             </button>

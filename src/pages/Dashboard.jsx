@@ -61,7 +61,7 @@ export default function Dashboard() {
     : launches[0]
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#0B1F4B' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: '#F0F4F8' }}>
       <NavBar />
       {/* Status bar */}
       <header className="border-b border-accent/20 px-4 py-1.5 flex items-center justify-between">
@@ -96,9 +96,9 @@ export default function Dashboard() {
         {isRateLimit && (
           <div className="panel p-4 text-center font-mono text-sm border-yellow-600/40">
             <div className="text-yellow-400 text-base mb-2">⚠ LL2 API Rate Limit Exceeded</div>
-            <div className="text-gray-300 text-[12px] leading-relaxed max-w-xl mx-auto">
-              The anonymous Launch Library 2 API allows <strong className="text-white">15 requests/hour</strong>.
-              The dashboard will automatically retry in <strong className="text-white">~1 hour</strong>.
+            <div className="text-gray-600 text-[12px] leading-relaxed max-w-xl mx-auto">
+              The anonymous Launch Library 2 API allows <strong className="text-[#1A1F36]">15 requests/hour</strong>.
+              The dashboard will automatically retry in <strong className="text-[#1A1F36]">~1 hour</strong>.
             </div>
             <div className="mt-3 text-[11px] text-gray-500">
               To increase the limit to 300 req/hr, add your SpaceDevs token to{' '}

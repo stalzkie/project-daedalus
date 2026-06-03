@@ -14,8 +14,8 @@
 
 html,
 body {
-  background-color: #0B1F4B;
-  color: #ffffff;
+  background-color: #F0F4F8;
+  color: #1A1F36;
   font-family: 'Inter', system-ui, sans-serif;
   margin: 0;
   padding: 0;
@@ -32,29 +32,30 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0d2257;
+  background: #E2E8F0;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1B6CA8;
+  background: #94A3B8;
   border-radius: 3px;
 }
 
 /* Leaflet map */
 .leaflet-container {
-  background: #0d2257 !important;
+  background: #E8F0F8 !important;
   font-family: 'JetBrains Mono', monospace !important;
 }
 .leaflet-popup-content-wrapper {
-  background: #102a68 !important;
-  color: #fff !important;
-  border: 1px solid #1B6CA8 !important;
+  background: #FFFFFF !important;
+  color: #1A1F36 !important;
+  border: 1px solid rgba(27,108,168,0.25) !important;
   border-radius: 4px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
 }
 .leaflet-popup-tip {
   background: #1B6CA8 !important;
 }
 .leaflet-tile-pane {
-  filter: brightness(0.6) saturate(0.4) hue-rotate(195deg);
+  filter: brightness(0.95) saturate(0.7);
 }
 
 /* Terminal-style status log */
@@ -62,7 +63,7 @@ body {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.72rem;
   line-height: 1.6;
-  border-bottom: 1px solid rgba(27, 108, 168, 0.15);
+  border-bottom: 1px solid rgba(27, 108, 168, 0.10);
   padding: 2px 0;
 }
 .terminal-line:last-child {
@@ -71,16 +72,30 @@ body {
 
 /* Panel grid */
 .panel {
-  background: rgba(13, 34, 87, 0.6);
-  border: 1px solid rgba(27, 108, 168, 0.35);
+  background: #FFFFFF;
+  border: 1px solid rgba(27, 108, 168, 0.15);
   border-radius: 6px;
-  backdrop-filter: blur(4px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
 }
 
 /* Horizontal scroll strip */
 .launch-strip {
   scrollbar-width: thin;
-  scrollbar-color: #1B6CA8 #0d2257;
+  scrollbar-color: #94A3B8 #E2E8F0;
+}
+.launch-strip::-webkit-scrollbar {
+  height: 4px;
+}
+.launch-strip::-webkit-scrollbar-track {
+  background: #E2E8F0;
+  border-radius: 4px;
+}
+.launch-strip::-webkit-scrollbar-thumb {
+  background: #94A3B8;
+  border-radius: 4px;
+}
+.launch-strip::-webkit-scrollbar-thumb:hover {
+  background: #64748B;
 }
 
 /* KaTeX dark theme — render white formulas on dark backgrounds */
@@ -92,27 +107,28 @@ body {
   margin: 0.25em 0;
 }
 
-/* React-datepicker dark theme */
+/* React-datepicker light theme */
 .react-datepicker {
-  background: #0d2257 !important;
-  border: 1px solid rgba(27,108,168,0.4) !important;
+  background: #FFFFFF !important;
+  border: 1px solid rgba(27,108,168,0.2) !important;
   font-family: 'JetBrains Mono', monospace !important;
   font-size: 11px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
 }
 .react-datepicker__header {
-  background: #102a68 !important;
-  border-bottom: 1px solid rgba(27,108,168,0.3) !important;
+  background: #F1F5F9 !important;
+  border-bottom: 1px solid rgba(27,108,168,0.15) !important;
 }
 .react-datepicker__current-month,
 .react-datepicker__day-name,
 .react-datepicker-time__header {
-  color: #9CA3AF !important;
+  color: #64748B !important;
 }
 .react-datepicker__day {
-  color: #fff !important;
+  color: #1A1F36 !important;
 }
 .react-datepicker__day:hover {
-  background: rgba(27,108,168,0.3) !important;
+  background: rgba(27,108,168,0.1) !important;
 }
 .react-datepicker__day--selected,
 .react-datepicker__day--keyboard-selected {
@@ -120,10 +136,10 @@ body {
   color: #fff !important;
 }
 .react-datepicker__day--outside-month {
-  color: #374151 !important;
+  color: #94A3B8 !important;
 }
 .react-datepicker__navigation-icon::before {
-  border-color: #9CA3AF !important;
+  border-color: #64748B !important;
 }
 .react-datepicker-popper {
   z-index: 100 !important;
@@ -143,12 +159,14 @@ body {
   right: 0;
   min-width: 220px;
   z-index: 50;
-  background: #0d2257;
-  border: 1px solid #1B6CA8;
+  background: #FFFFFF;
+  border: 1px solid rgba(27,108,168,0.2);
   border-radius: 4px;
   padding: 8px 10px;
   font-size: 0.7rem;
   font-family: 'JetBrains Mono', monospace;
   white-space: nowrap;
   pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #1A1F36;
 }

@@ -64,7 +64,7 @@ export default function FailureDatabase() {
   const handlePanelClose = useCallback(() => setSelectedFailure(null), [])
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#0B1F4B' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: '#F0F4F8' }}>
       <NavBar />
 
       {/* Sub-header */}
@@ -102,8 +102,8 @@ export default function FailureDatabase() {
         {isRateLimit && (
           <div className="panel p-4 font-mono text-sm text-center" style={{ borderColor: 'rgba(185,28,28,0.4)' }}>
             <div className="text-amber-400 text-base mb-2">⚠ LL2 API Rate Limit Exceeded</div>
-            <div className="text-gray-300 text-[12px] leading-relaxed">
-              The failures database will retry automatically in <strong className="text-white">~1 hour</strong>.
+            <div className="text-gray-600 text-[12px] leading-relaxed">
+              The failures database will retry automatically in <strong className="text-[#1A1F36]">~1 hour</strong>.
             </div>
           </div>
         )}

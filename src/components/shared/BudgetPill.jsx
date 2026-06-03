@@ -9,9 +9,9 @@ export default function BudgetPill({ budget }) {
   const pct = remaining / max
 
   const color =
-    pct > 0.4 ? 'text-green-400 border-green-700/50' :
-    pct > 0.1 ? 'text-yellow-400 border-yellow-700/50' :
-                'text-red-400 border-red-700/50'
+    pct > 0.4 ? 'text-green-600 border-green-400/50' :
+    pct > 0.1 ? 'text-yellow-600 border-yellow-400/50' :
+                'text-red-600 border-red-400/50'
 
   const resetTime = resetAt
     ? new Date(resetAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })

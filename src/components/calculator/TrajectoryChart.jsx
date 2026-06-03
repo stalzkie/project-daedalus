@@ -21,13 +21,13 @@ const CustomTooltip = ({ active, payload, label }) => {
   const d = payload[0]?.payload
   if (!d) return null
   return (
-    <div className="bg-navy-800 border border-accent/40 rounded p-2 text-[10px] font-mono shadow-xl"
-         style={{ background: '#0d2257' }}>
+    <div className="border border-accent/30 rounded p-2 text-[10px] font-mono shadow-lg"
+         style={{ background: '#FFFFFF', color: '#1A1F36' }}>
       <div className="text-accent font-bold mb-1">T+{label}s</div>
-      <div className="text-blue-300">Altitude: {d.h} km</div>
-      <div className="text-green-300">Velocity: {d.v?.toLocaleString()} m/s</div>
-      {d.q != null && <div className="text-orange-300">Dyn. pressure: {(d.q / 1000).toFixed(1)} kPa</div>}
-      {d.m != null && <div className="text-gray-400">Mass: {d.m?.toLocaleString()} kg</div>}
+      <div className="text-blue-700">Altitude: {d.h} km</div>
+      <div className="text-green-700">Velocity: {d.v?.toLocaleString()} m/s</div>
+      {d.q != null && <div className="text-orange-600">Dyn. pressure: {(d.q / 1000).toFixed(1)} kPa</div>}
+      {d.m != null && <div className="text-gray-600">Mass: {d.m?.toLocaleString()} kg</div>}
     </div>
   )
 }
@@ -48,7 +48,7 @@ export default function TrajectoryChart({ stages, options }) {
 
   if (!sim?.data?.length) {
     return (
-      <div className="panel p-4 flex items-center justify-center text-yellow-400 font-mono text-sm" style={{ minHeight: 260 }}>
+      <div className="panel p-4 flex items-center justify-center text-amber-600 font-mono text-sm" style={{ minHeight: 260 }}>
         Simulation produced no data — check stage parameters (TWR &gt; 1 required for liftoff).
       </div>
     )
@@ -60,7 +60,7 @@ export default function TrajectoryChart({ stages, options }) {
         <span className="text-[10px] font-mono text-accent tracking-widest uppercase">Ascent Trajectory</span>
         <span className="text-[10px] font-mono text-gray-500">— Euler integration, 1 s timestep</span>
         {sim.maxQAlt_km > 0 && (
-          <span className="text-[10px] font-mono text-orange-400 ml-auto">
+          <span className="text-[10px] font-mono text-orange-600 ml-auto">
             Max-Q: {(sim.maxQ_Pa / 1000).toFixed(1)} kPa @ {sim.maxQAlt_km.toFixed(1)} km
           </span>
         )}
@@ -72,7 +72,7 @@ export default function TrajectoryChart({ stages, options }) {
 
           <XAxis
             dataKey="t"
-            tick={{ fill: '#9CA3AF', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
+            tick={{ fill: '#64748B', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
             tickLine={false}
             axisLine={{ stroke: 'rgba(27,108,168,0.3)' }}
           >
@@ -84,13 +84,13 @@ export default function TrajectoryChart({ stages, options }) {
           <YAxis
             yAxisId="alt"
             dataKey="h"
-            tick={{ fill: '#60A5FA', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
+            tick={{ fill: '#1B6CA8', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
             tickLine={false}
             axisLine={false}
             width={42}
           >
             <Label value="Alt (km)" angle={-90} position="insideLeft"
-              style={{ fill: '#60A5FA', fontSize: 9, fontFamily: 'monospace' }} />
+              style={{ fill: '#1B6CA8', fontSize: 9, fontFamily: 'monospace' }} />
           </YAxis>
 
           {/* Right Y: velocity */}
@@ -98,18 +98,18 @@ export default function TrajectoryChart({ stages, options }) {
             yAxisId="vel"
             orientation="right"
             dataKey="v"
-            tick={{ fill: '#34D399', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
+            tick={{ fill: '#1A7F4B', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
             tickLine={false}
             axisLine={false}
             width={52}
           >
             <Label value="Vel (m/s)" angle={90} position="insideRight"
-              style={{ fill: '#34D399', fontSize: 9, fontFamily: 'monospace' }} />
+              style={{ fill: '#1A7F4B', fontSize: 9, fontFamily: 'monospace' }} />
           </YAxis>
 
           <Tooltip content={<CustomTooltip />} />
           <Legend
-            wrapperStyle={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: '#9CA3AF', paddingTop: 8 }}
+            wrapperStyle={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: '#64748B', paddingTop: 8 }}
           />
 
           {/* Event reference lines */}
@@ -165,9 +165,9 @@ export default function TrajectoryChart({ stages, options }) {
 
 function StatCell({ label, value }) {
   return (
-    <div className="bg-black/20 border border-accent/10 rounded px-2 py-1.5">
+    <div className="bg-[#F8FAFC] border border-accent/10 rounded px-2 py-1.5">
       <div className="text-gray-500 text-[8px] uppercase tracking-widest">{label}</div>
-      <div className="text-white font-semibold mt-0.5">{value}</div>
+      <div className="text-[#1A1F36] font-semibold mt-0.5">{value}</div>
     </div>
   )
 }

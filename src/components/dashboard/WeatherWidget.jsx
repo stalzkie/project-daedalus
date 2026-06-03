@@ -67,9 +67,9 @@ export default function WeatherWidget({ launch, fetchedAt }) {
   const wxFetchedAt = dataUpdatedAt ? new Date(dataUpdatedAt).toISOString() : fetchedAt
 
   const gonoColor = {
-    'GO':      'text-green-400 border-green-500/50 bg-green-900/20',
-    'CAUTION': 'text-yellow-400 border-yellow-500/50 bg-yellow-900/20',
-    'NO-GO':   'text-red-400 border-red-500/50 bg-red-900/20',
+    'GO':      'text-green-700 border-green-300 bg-green-50',
+    'CAUTION': 'text-yellow-700 border-yellow-300 bg-yellow-50',
+    'NO-GO':   'text-red-700 border-red-300 bg-red-50',
   }
 
   return (
@@ -88,7 +88,7 @@ export default function WeatherWidget({ launch, fetchedAt }) {
       )}
 
       {isError && (
-        <div className="text-red-400 text-xs font-mono py-2 text-center">
+        <div className="text-red-600 text-xs font-mono py-2 text-center">
           Weather fetch failed — check network / CORS
         </div>
       )}
@@ -126,11 +126,11 @@ export default function WeatherWidget({ launch, fetchedAt }) {
 
 function MetRow({ icon, label, value }) {
   return (
-    <div className="bg-navy-800/40 rounded px-2 py-1.5 border border-accent/10">
+    <div className="bg-[#F8FAFC] rounded px-2 py-1.5 border border-[rgba(27,108,168,0.1)]">
       <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-0.5">{label}</div>
       <div className="flex items-center gap-1.5">
         <span className="text-base leading-none">{icon}</span>
-        <span className="font-mono font-semibold text-white text-[12px]">{value}</span>
+        <span className="font-mono font-semibold text-[#1A1F36] text-[12px]">{value}</span>
       </div>
     </div>
   )

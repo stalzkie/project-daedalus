@@ -30,14 +30,14 @@ export default function TrajectoryTab({ onResult, prefill }) {
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={densityData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(27,108,168,0.12)" />
-              <XAxis dataKey="h" tick={{ fill: '#9CA3AF', fontSize: 9 }}
+              <XAxis dataKey="h" tick={{ fill: '#64748B', fontSize: 9 }}
                 label={{ value: 'Altitude (km)', position: 'insideBottom', offset: -4, fill: '#4B5563', fontSize: 8 }} />
-              <YAxis tick={{ fill: '#9CA3AF', fontSize: 9 }} width={55}
+              <YAxis tick={{ fill: '#64748B', fontSize: 9 }} width={55}
                 tickFormatter={v => v.toExponential(1)}
                 label={{ value: 'ρ (kg/m³)', angle: -90, position: 'insideLeft', fill: '#4B5563', fontSize: 8 }} />
               <Tooltip
                 formatter={v => [`${v} kg/m³`, 'Density']}
-                contentStyle={{ background: '#0d2257', border: '1px solid #1B6CA8', fontSize: 10 }}
+                contentStyle={{ background: '#FFFFFF', border: '1px solid rgba(27,108,168,0.2)', fontSize: 10 }}
               />
               <ReferenceLine x={11} stroke="#B45309" strokeDasharray="3 2"
                 label={{ value: 'Tropopause 11km', fill: '#B45309', fontSize: 8 }} />

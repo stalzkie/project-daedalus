@@ -23,7 +23,7 @@ function Section({ label, open, onToggle, children }) {
       <button
         type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-mono text-gray-400 hover:text-white transition-colors"
+        className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-mono text-gray-500 hover:text-[#1A1F36] transition-colors"
       >
         <span className="uppercase tracking-widest">{label}</span>
         <span className="text-gray-600">{open ? '▲' : '▼'}</span>
@@ -38,7 +38,7 @@ function CheckItem({ label, checked, onChange }) {
     <label className="flex items-center gap-2 cursor-pointer group py-0.5">
       <input type="checkbox" checked={checked} onChange={onChange}
              className="w-3 h-3 rounded" style={{ accentColor: '#B91C1C' }} />
-      <span className={`text-[11px] transition-colors ${checked ? 'text-white' : 'text-gray-400 group-hover:text-gray-200'}`}>
+      <span className={`text-[11px] transition-colors ${checked ? 'text-[#1A1F36]' : 'text-gray-500 group-hover:text-gray-700'}`}>
         {label}
       </span>
     </label>
@@ -78,7 +78,7 @@ export default function FailureFilterPanel({ filters, onChange, onClear, activeC
               {activeCount}
             </span>
             <button type="button" onClick={onClear}
-                    className="text-[10px] font-mono text-gray-400 hover:text-white transition-colors">
+                    className="text-[10px] font-mono text-gray-500 hover:text-[#1A1F36] transition-colors">
               Clear
             </button>
           </div>
@@ -114,7 +114,7 @@ export default function FailureFilterPanel({ filters, onChange, onClear, activeC
               className="text-[10px] font-mono px-2 py-0.5 rounded border transition-all"
               style={filters.severity === opt.value
                 ? { background: '#B91C1C', color: '#fff', borderColor: '#B91C1C' }
-                : { borderColor: 'rgba(185,28,28,0.3)', color: '#9CA3AF' }
+                : { borderColor: 'rgba(185,28,28,0.3)', color: '#64748B' }
               }
             >
               {opt.label}
@@ -130,7 +130,7 @@ export default function FailureFilterPanel({ filters, onChange, onClear, activeC
             <input type="checkbox" checked={!!filters.rudOnly}
                    onChange={e => setField('rudOnly', e.target.checked)}
                    style={{ accentColor: '#B91C1C' }} className="w-3 h-3" />
-            <span className="text-[10px] font-mono text-gray-400 flex items-center gap-1">
+            <span className="text-[10px] font-mono text-gray-600 flex items-center gap-1">
               <span className="text-red-500">🔥</span> RUD only
             </span>
           </label>
@@ -138,7 +138,7 @@ export default function FailureFilterPanel({ filters, onChange, onClear, activeC
             <input type="checkbox" checked={!!filters.ftsOnly}
                    onChange={e => setField('ftsOnly', e.target.checked)}
                    style={{ accentColor: '#D97706' }} className="w-3 h-3" />
-            <span className="text-[10px] font-mono text-gray-400 flex items-center gap-1">
+            <span className="text-[10px] font-mono text-gray-600 flex items-center gap-1">
               <span className="text-amber-500">⚠</span> FTS only
             </span>
           </label>

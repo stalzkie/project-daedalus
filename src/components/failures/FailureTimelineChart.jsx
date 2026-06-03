@@ -18,11 +18,11 @@ const CustomTooltip = ({ active, payload, label }) => {
   const partial = payload.find(p => p.dataKey === 'partial')?.value ?? 0
   return (
     <div className="rounded border px-3 py-2 text-[11px] font-mono shadow-xl"
-         style={{ background: '#0d2257', borderColor: '#B91C1C40' }}>
+         style={{ background: '#FFFFFF', borderColor: '#B91C1C40' }}>
       <div className="font-bold mb-1" style={{ color: '#B91C1C' }}>{label}</div>
-      <div className="text-red-400">{total} total {total === 1 ? 'loss' : 'losses'}</div>
-      <div className="text-amber-400">{partial} partial {partial === 1 ? 'failure' : 'failures'}</div>
-      <div className="text-gray-400 border-t border-gray-700 mt-1 pt-1">{total + partial} combined</div>
+      <div className="text-red-600">{total} total {total === 1 ? 'loss' : 'losses'}</div>
+      <div className="text-amber-600">{partial} partial {partial === 1 ? 'failure' : 'failures'}</div>
+      <div className="text-gray-500 border-t border-gray-200 mt-1 pt-1">{total + partial} combined</div>
     </div>
   )
 }
@@ -30,7 +30,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 function RefLabel({ viewBox, label }) {
   return (
     <text x={viewBox.x + 4} y={viewBox.y + 12}
-          fill="#9CA3AF" fontSize={8} fontFamily="JetBrains Mono, monospace">
+          fill="#64748B" fontSize={8} fontFamily="JetBrains Mono, monospace">
       {label}
     </text>
   )
@@ -57,19 +57,19 @@ export default function FailureTimelineChart({ stats, fetchedAt }) {
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(185,28,28,0.12)" />
             <XAxis
               dataKey="decade"
-              tick={{ fill: '#9CA3AF', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
+              tick={{ fill: '#64748B', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
               tickLine={false}
               axisLine={{ stroke: 'rgba(185,28,28,0.25)' }}
             />
             <YAxis
-              tick={{ fill: '#9CA3AF', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
+              tick={{ fill: '#64748B', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
               tickLine={false}
               axisLine={{ stroke: 'rgba(185,28,28,0.25)' }}
               width={34}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(185,28,28,0.08)' }} />
             <Legend
-              wrapperStyle={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: '#9CA3AF' }}
+              wrapperStyle={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: '#64748B' }}
               formatter={(v) => v === 'total' ? 'Total Loss' : 'Partial Failure'}
             />
             <Bar dataKey="total"   stackId="a" fill="#B91C1C" name="total"   radius={[0, 0, 0, 0]} />

@@ -18,9 +18,12 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const CACHE_DIR = path.join(__dirname, 'cache-data')
+// Vercel's project filesystem is read-only; use /tmp so mkdirSync + writes succeed
+const CACHE_DIR = process.env.VERCEL
+  ? '/tmp/daedalus-cache'
+  : path.join(__dirname, 'cache-data')
 
-if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true })
+try { if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true }) } catch (_) {}
 
 // ─── TTL constants (ms) ────────────────────────────────────────────────────
 export const TTL = {
@@ -64,6 +67,27 @@ export function cacheWrite(key, data) {
   } catch (e) {
     console.warn('[Cache] Write failed:', e.message)
   }
+}
+
+/**
+ * Return all cache entries whose sanitised filename starts with the given prefix.
+ * Each entry: { data, ts, file, offset }
+ * `offset` is extracted from filenames that contain "offset_NNN".
+ */
+export function readAllCachesMatching(prefix) {
+  try {
+    const safePrefix = prefix.replace(/[^a-z0-9]/gi, '_')
+    const files = fs.readdirSync(CACHE_DIR).filter(f => f.startsWith(safePrefix) && f.endsWith('.json'))
+    const results = []
+    for (const f of files) {
+      try {
+        const { data, ts } = JSON.parse(fs.readFileSync(path.join(CACHE_DIR, f), 'utf8'))
+        const m = f.match(/offset_(\d+)/)
+        results.push({ data, ts, file: f, offset: m ? parseInt(m[1]) : -1 })
+      } catch { /* skip corrupt files */ }
+    }
+    return results
+  } catch { return [] }
 }
 
 /** How many cache files exist and total size. */

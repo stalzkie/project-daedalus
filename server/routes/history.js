@@ -1,6 +1,102 @@
 import { Router } from 'express'
-import { fetchWithCache, TTL, getBudgetStatus } from '../cacheManager.js'
+import { fetchWithCache, cacheRead, cacheWrite, readAllCachesMatching, recordRequest, getBudgetStatus, TTL } from '../cacheManager.js'
 import { ll2, LL2_BASE } from '../lib/ll2Client.js'
+
+// ─── Running chart-stats accumulator ─────────────────────────────────────────
+// Stores { yearAgencyMap, payloadScatter, seenIds, total } across all unfiltered
+// history pages that have been served. Updates are fire-and-forget.
+
+const CHART_STATS_KEY = 'chart_stats_v1'
+
+function getChartStatsOrEmpty() {
+  return cacheRead(CHART_STATS_KEY, Infinity, Infinity)?.data ?? {
+    yearAgencyMap: {}, payloadScatter: [], seenIds: {}, total: 0,
+  }
+}
+
+function ingestIntoStats(stats, launch) {
+  if (!launch?.id || stats.seenIds[launch.id]) return
+  stats.seenIds[launch.id] = 1
+
+  const year = new Date(launch.net).getFullYear()
+  if (!year || isNaN(year)) return
+  const ag = launch.launch_service_provider?.abbrev
+          || launch.launch_service_provider?.name
+          || 'Unknown'
+  const key = `${ag}||${year}`
+  if (!stats.yearAgencyMap[key])
+    stats.yearAgencyMap[key] = { agency: ag, year, total: 0, success: 0 }
+  stats.yearAgencyMap[key].total++
+  if (launch.status?.abbrev === 'Success') stats.yearAgencyMap[key].success++
+
+  const leo = launch.rocket?.configuration?.leo_capacity
+           ?? launch.rocket?.configuration?.payload_leo_kg
+  const orb = launch.mission?.orbit?.abbrev
+  if (leo != null && orb && ORBIT_APOGEE[orb] != null) {
+    stats.payloadScatter.push({
+      id: launch.id, name: launch.name,
+      agency: launch.launch_service_provider?.name || 'Unknown',
+      orbitAbbrev: orb, leoCapacity: leo, apogee: ORBIT_APOGEE[orb],
+      status: launch.status?.abbrev ?? null,
+    })
+  }
+}
+
+function updateChartStats(launches, total) {
+  setImmediate(() => {
+    try {
+      const stats = getChartStatsOrEmpty()
+      let changed = false
+      for (const l of launches) {
+        const before = Object.keys(stats.seenIds).length
+        ingestIntoStats(stats, l)
+        if (Object.keys(stats.seenIds).length !== before) changed = true
+      }
+      if (total && total > stats.total) { stats.total = total; changed = true }
+      if (changed) cacheWrite(CHART_STATS_KEY, stats)
+    } catch (e) {
+      console.warn('[ChartStats] update failed:', e.message)
+    }
+  })
+}
+
+/**
+ * Bootstrap: scan existing unfiltered history cache files on first chart request
+ * so data is available even before the user has browsed the table in the current session.
+ */
+function bootstrapChartStats() {
+  try {
+    const all = readAllCachesMatching('history_mode_detailed_')
+    // Only unfiltered pages: filenames that don't contain filter markers
+    const unfiltered = all.filter(e =>
+      !e.file.includes('icontains') &&
+      !e.file.includes('status__abbrev')
+    )
+    if (!unfiltered.length) return
+
+    // Dedupe by offset — take the most recent version of each page
+    const byOffset = {}
+    for (const e of unfiltered) {
+      if (e.offset < 0) continue
+      if (!byOffset[e.offset] || e.ts > byOffset[e.offset].ts) byOffset[e.offset] = e
+    }
+
+    const stats = getChartStatsOrEmpty()
+    let total = stats.total
+    let changed = false
+    for (const { data } of Object.values(byOffset)) {
+      if (data?.count && data.count > total) { total = data.count; changed = true }
+      for (const l of (data?.results ?? [])) {
+        const before = Object.keys(stats.seenIds).length
+        ingestIntoStats(stats, l)
+        if (Object.keys(stats.seenIds).length !== before) changed = true
+      }
+    }
+    if (changed) { stats.total = total; cacheWrite(CHART_STATS_KEY, stats) }
+  } catch (e) {
+    console.warn('[ChartStats] bootstrap failed:', e.message)
+  }
+}
 
 const router  = Router()
 
@@ -17,83 +113,124 @@ function rateLimitResponse(res, err) {
   return res.status(429).json({ error: 'rate_limit', message: err.message, budget: err.budget })
 }
 
+// Approximate apogee km by orbit class (mirrors client-side constant)
+const ORBIT_APOGEE = {
+  VLEO: 350, LEO: 408, ISS: 408, SSO: 550, POLAR: 600,
+  MEO: 20200, GTO: 35786, GEO: 35786, HEO: 40000, TLI: 384400, BEO: 600000,
+}
+
 /**
  * GET /api/launches/history/chart
- * Fetches ALL matching launches (every page) for chart rendering.
- * Strategy: fetch page 1 to learn the total count, then fetch all remaining
- * pages in parallel batches of 5 so the full dataset lands quickly.
- * Result is cached 24 hr — past launches never change.
+ * Returns pre-aggregated stats for the charts.
+ *
+ * Strategy (in order — first that yields data wins):
+ *  1. Running chart_stats_v1 file (updated write-through by the history table endpoint)
+ *  2. Bootstrap: scan unfiltered history cache files that are already on disk
+ *  3. LL2 live fetch (rate-limit tolerant, returns partial data if limit hit)
+ *
+ * Response: { byYearAgency, payloadScatter, total, fetched, partial }
  */
 router.get('/history/chart', async (req, res) => {
-  const {
-    agency = '', rocket = '', outcome = '', orbit = '',
-    date_from = '', date_to = '',
-    sort = 'net', sort_desc = 'true',
-  } = req.query
+  const { agency = '', rocket = '', outcome = '', orbit = '', date_from = '', date_to = '' } = req.query
+  const isUnfiltered = !agency && !rocket && !outcome && !orbit && !date_from && !date_to
 
+  // ── 1. Running stats file (populated by the history table endpoint) ────────
+  if (isUnfiltered) {
+    let stats = getChartStatsOrEmpty()
+
+    // If stats are empty (first ever visit), run the bootstrap scan now
+    if (Object.keys(stats.seenIds).length === 0) bootstrapChartStats()
+
+    // Re-read after potential bootstrap
+    stats = getChartStatsOrEmpty()
+    const fetched = Object.keys(stats.seenIds).length
+
+    if (fetched > 0) {
+      return res.json({
+        byYearAgency:  Object.values(stats.yearAgencyMap),
+        payloadScatter: stats.payloadScatter,
+        total:          stats.total || fetched,
+        fetched,
+        partial:        stats.total > 0 && fetched < stats.total,
+        _meta: { fromStats: true, fetchedAt: new Date().toISOString(), budget: getBudgetStatus() },
+      })
+    }
+  }
+
+  // ── 2. LL2 live fetch for filtered queries or when no cached data exists ───
+  const { sort = 'net', sort_desc = 'true' } = req.query
   const ordering = `${sort_desc === 'true' ? '-' : ''}${SORT_MAP[sort] || 'net'}`
-  const cacheKey = `history_chart_v2_${[agency, rocket, outcome, orbit, date_from, date_to, ordering].join('|')}`
+
+  const budgetNow = getBudgetStatus()
+  if (!budgetNow.canFetch) {
+    return res.json({
+      byYearAgency: [], payloadScatter: [], total: 0, fetched: 0, partial: true,
+      _meta: { rateLimit: true, budget: budgetNow, fetchedAt: new Date().toISOString() },
+    })
+  }
+
+  const PAGE_SIZE = 100, BATCH_SIZE = 5
+  const yearAgencyMap = {}, payloadScatter = [], seenIds = new Set()
+  let total = 0, partial = false
+
+  function buildParams(offset) {
+    const p = new URLSearchParams({ mode: 'normal', limit: String(PAGE_SIZE), offset: String(offset), ordering })
+    p.set('net__lte', date_to || new Date().toISOString())
+    if (date_from) p.set('net__gte', date_from)
+    if (agency)    p.set('launch_service_provider__name__icontains', agency)
+    if (rocket)    p.set('rocket__configuration__name__icontains', rocket)
+    if (orbit)     p.set('mission__orbit__abbrev', orbit)
+    if (outcome === 'success')  p.set('status__abbrev', 'Success')
+    else if (outcome === 'failure') p.set('status__abbrev', 'Failure')
+    else if (outcome === 'partial') p.set('status__abbrev', 'Partial Failure')
+    return p
+  }
+
+  function ingestLocal(launch) {
+    if (!launch?.id || seenIds.has(launch.id)) return
+    seenIds.add(launch.id)
+    const year = new Date(launch.net).getFullYear()
+    if (!year || isNaN(year)) return
+    const ag = launch.launch_service_provider?.abbrev || launch.launch_service_provider?.name || 'Unknown'
+    const key = `${ag}||${year}`
+    if (!yearAgencyMap[key]) yearAgencyMap[key] = { agency: ag, year, total: 0, success: 0 }
+    yearAgencyMap[key].total++
+    if (launch.status?.abbrev === 'Success') yearAgencyMap[key].success++
+    const leo = launch.rocket?.configuration?.leo_capacity ?? launch.rocket?.configuration?.payload_leo_kg
+    const orb = launch.mission?.orbit?.abbrev
+    if (leo != null && orb && ORBIT_APOGEE[orb] != null)
+      payloadScatter.push({ id: launch.id, name: launch.name, agency: launch.launch_service_provider?.name || 'Unknown', orbitAbbrev: orb, leoCapacity: leo, apogee: ORBIT_APOGEE[orb], status: launch.status?.abbrev ?? null })
+  }
 
   try {
-    const { data, fromCache, stale, budget } = await fetchWithCache(
-      cacheKey,
-      async () => {
-        const PAGE_SIZE  = 100
-        const BATCH_SIZE = 5   // concurrent LL2 requests per round
-
-        function buildParams(offset) {
-          const p = new URLSearchParams({
-            mode: 'normal', limit: String(PAGE_SIZE),
-            offset: String(offset), ordering,
-          })
-          p.set('net__lte', date_to || new Date().toISOString())
-          if (date_from) p.set('net__gte', date_from)
-          if (agency)    p.set('launch_service_provider__name__icontains', agency)
-          if (rocket)    p.set('rocket__configuration__name__icontains', rocket)
-          if (orbit)     p.set('mission__orbit__abbrev', orbit)
-          if (outcome === 'success')  p.set('status__abbrev', 'Success')
-          else if (outcome === 'failure') p.set('status__abbrev', 'Failure')
-          else if (outcome === 'partial') p.set('status__abbrev', 'Partial Failure')
-          return p
-        }
-
-        // Page 1 → learn the total count
-        const { data: first } = await ll2.getUrl(`${LL2_BASE}/launch/?${buildParams(0)}`)
-        const total   = first.count ?? 0
-        const results = [...(first.results ?? [])]
-
-        if (total > PAGE_SIZE) {
-          // Build the full list of remaining page offsets
-          const offsets = []
-          for (let off = PAGE_SIZE; off < total; off += PAGE_SIZE) offsets.push(off)
-
-          // Fetch in parallel batches — keeps wire time low while respecting LL2
-          for (let i = 0; i < offsets.length; i += BATCH_SIZE) {
-            const batch = offsets.slice(i, i + BATCH_SIZE)
-            const pages = await Promise.all(
-              batch.map(off =>
-                ll2.getUrl(`${LL2_BASE}/launch/?${buildParams(off)}`)
-                   .then(r => r.data.results ?? [])
-              )
-            )
-            results.push(...pages.flat())
-          }
-        }
-
-        return { results, count: total }
-      },
-      { fresh: TTL.HISTORY, stale: TTL.HISTORY * 2 },
-    )
-
-    return res.json({
-      ...data,
-      _meta: { fetchedAt: new Date().toISOString(), source: 'LL2 v2.2.0', fromCache, stale, budget },
-    })
+    recordRequest()
+    const { data: first } = await ll2.getUrl(`${LL2_BASE}/launch/?${buildParams(0)}`)
+    total = first.count ?? 0
+    ;(first.results ?? []).forEach(ingestLocal)
+    if (total > PAGE_SIZE) {
+      const offsets = []
+      for (let o = PAGE_SIZE; o < total; o += PAGE_SIZE) offsets.push(o)
+      for (let i = 0; i < offsets.length; i += BATCH_SIZE) {
+        if (!getBudgetStatus().canFetch) { partial = true; break }
+        try {
+          recordRequest()
+          const pages = await Promise.all(offsets.slice(i, i + BATCH_SIZE).map(o =>
+            ll2.getUrl(`${LL2_BASE}/launch/?${buildParams(o)}`).then(r => r.data.results ?? []).catch(() => [])
+          ))
+          pages.flat().forEach(ingestLocal)
+        } catch { partial = true; break }
+      }
+    }
   } catch (err) {
     if (err.isRateLimit) return rateLimitResponse(res, err)
     console.error('[History/Chart]', err.response?.status, err.message)
-    res.status(502).json({ error: 'fetch_failed', message: err.message })
+    return res.status(502).json({ error: 'fetch_failed', message: err.message })
   }
+
+  return res.json({
+    byYearAgency: Object.values(yearAgencyMap), payloadScatter, total, fetched: seenIds.size, partial,
+    _meta: { fromCache: false, fetchedAt: new Date().toISOString(), budget: getBudgetStatus() },
+  })
 })
 
 /**
@@ -137,6 +274,10 @@ router.get('/history', async (req, res) => {
       // Past data doesn't change — 24 hr fresh, serve stale up to 48 hr when rate-limited
       { fresh: TTL.HISTORY, stale: TTL.HISTORY * 2 },
     )
+
+    // Write-through: accumulate chart stats from every unfiltered page we serve
+    const isUnfilteredPage = !agency && !rocket && !outcome && !orbit && !date_from && !date_to
+    if (isUnfilteredPage) updateChartStats(data.results ?? [], data.count)
 
     return res.json({
       ...data,

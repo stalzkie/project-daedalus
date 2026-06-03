@@ -68,13 +68,19 @@ router.get('/:launchId', async (req, res) => {
 
         return {
           launchId,
-          launchName:   launch.name,
+          launchName:         launch.name,
           orbitAbbrev,
           orbitElements,
           tle,
           launchSite,
-          status:       launch.status?.abbrev,
-          net:          launch.net,
+          status:             launch.status?.abbrev,
+          net:                launch.net,
+          imageUrl:           launch.image?.image_url || null,
+          missionDescription: launch.mission?.description || null,
+          vehicleName:        launch.rocket?.configuration?.full_name
+                              || launch.rocket?.configuration?.name
+                              || null,
+          provider:           launch.launch_service_provider?.name || null,
         }
       },
       { fresh: TTL.DETAIL, stale: TTL.DETAIL * 2 },

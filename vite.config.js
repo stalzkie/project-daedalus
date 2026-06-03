@@ -8,6 +8,8 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  // satellite.js v7 WASM pthreads file has top-level await; 'es' workers support it
+  worker: { format: 'es' },
   define: {
     // Tells CesiumJS where its workers/assets are at runtime
     CESIUM_BASE_URL: JSON.stringify('/cesium'),
@@ -28,6 +30,12 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',   // satellite.js v7 WASM build uses top-level await
+    // satellite.js WASM builds are pure ESM with top-level await.
+    // Excluding them prevents @rollup/plugin-commonjs from wrapping them in an
+    // iife-format resolver module, which can't handle top-level await.
+    commonjsOptions: {
+      exclude: [/satellite\.js/],
+    },
     rollupOptions: {
       output: {
         manualChunks: { cesium: ['cesium'] },

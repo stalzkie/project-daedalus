@@ -16,10 +16,10 @@ export default function DataSourceTag({ source, fetchedAt }) {
       >
         i
       </button>
-      <div className="ds-tooltip-content text-gray-300">
+      <div className="ds-tooltip-content text-gray-600">
         <div className="text-accent font-semibold mb-1">Data Source</div>
-        <div><span className="text-gray-500">src:</span> {source}</div>
-        <div><span className="text-gray-500">at: </span> {timeStr}</div>
+        <div><span className="text-gray-400">src:</span> {source}</div>
+        <div><span className="text-gray-400">at: </span> {timeStr}</div>
       </div>
     </div>
   )

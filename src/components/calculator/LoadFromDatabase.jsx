@@ -40,8 +40,8 @@ export default function LoadFromDatabase({ onSelect, activeTab }) {
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={handleKey}
-          className="flex-1 bg-navy-800/60 border border-accent/30 rounded px-3 py-1.5 text-[12px]
-            font-mono text-white placeholder-gray-600 focus:outline-none focus:border-accent"
+          className="flex-1 bg-white border border-[rgba(27,108,168,0.25)] rounded px-3 py-1.5 text-[12px]
+            font-mono text-[#1A1F36] placeholder-gray-400 focus:outline-none focus:border-accent"
         />
         <button
           type="button"
@@ -54,7 +54,7 @@ export default function LoadFromDatabase({ onSelect, activeTab }) {
         </button>
       </div>
 
-      {error && <div className="text-red-400 text-[10px] font-mono mb-2">{error}</div>}
+      {error && <div className="text-red-600 text-[10px] font-mono mb-2">{error}</div>}
 
       {results.length > 0 && (
         <div className="space-y-2 max-h-72 overflow-y-auto">
@@ -82,19 +82,19 @@ function VehicleResult({ vehicle: v, onSelect }) {
   ]
 
   return (
-    <div className="border border-accent/20 rounded bg-navy-800/30">
+    <div className="border border-accent/20 rounded bg-[#F8FAFC]">
       <div className="flex items-center gap-2 px-3 py-2">
         {v.imageUrl && (
           <img src={v.imageUrl} alt="" className="w-8 h-8 object-cover rounded shrink-0 opacity-80" />
         )}
         <div className="flex-1 min-w-0">
-          <div className="text-[12px] font-semibold text-white truncate">{v.name}</div>
+          <div className="text-[12px] font-semibold text-[#1A1F36] truncate">{v.name}</div>
           <div className="text-[9px] font-mono text-gray-500">{v.manufacturer} · {v.family}</div>
         </div>
         {v.successRate != null && (
-          <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
-            v.successRate >= 95 ? 'bg-green-900/50 text-green-400' :
-            v.successRate >= 80 ? 'bg-yellow-900/50 text-yellow-400' : 'bg-red-900/50 text-red-400'
+          <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${
+            v.successRate >= 95 ? 'bg-green-50 text-green-700 border-green-300' :
+            v.successRate >= 80 ? 'bg-amber-50 text-amber-700 border-amber-300' : 'bg-red-50 text-red-700 border-red-300'
           }`}>
             {v.successRate}%
           </span>
@@ -102,14 +102,14 @@ function VehicleResult({ vehicle: v, onSelect }) {
         <button
           type="button"
           onClick={() => setExpanded(e => !e)}
-          className="text-gray-500 hover:text-white text-[10px] font-mono"
+          className="text-gray-500 hover:text-[#1A1F36] text-[10px] font-mono"
         >
           {expanded ? '▲' : '▼'}
         </button>
         <button
           type="button"
           onClick={() => onSelect(v)}
-          className="text-[10px] font-mono px-2 py-1 bg-accent/20 hover:bg-accent text-accent
+          className="text-[10px] font-mono px-2 py-1 bg-accent/10 hover:bg-accent text-accent
             hover:text-white border border-accent/30 rounded transition-colors whitespace-nowrap"
         >
           Use values
@@ -120,8 +120,8 @@ function VehicleResult({ vehicle: v, onSelect }) {
         <div className="grid grid-cols-4 gap-px border-t border-accent/10">
           {fields.map(f => (
             <div key={f.label} className="px-2 py-1.5">
-              <div className="text-[8px] font-mono text-gray-600 uppercase">{f.label}</div>
-              <div className="text-[10px] font-mono text-white">{f.value}</div>
+              <div className="text-[8px] font-mono text-gray-500 uppercase">{f.label}</div>
+              <div className="text-[10px] font-mono text-[#1A1F36]">{f.value}</div>
             </div>
           ))}
         </div>

@@ -14,10 +14,10 @@ export default function NavBar() {
   ) + 1
 
   return (
-    <nav className="border-b border-accent/30 px-4 py-2 flex items-center gap-4 shrink-0">
+    <nav className="bg-white border-b border-[rgba(0,0,0,0.07)] shadow-sm px-4 py-2 flex items-center gap-4 shrink-0">
       <div className="flex items-center gap-2 mr-4">
-        <div className="w-6 h-6 rounded bg-accent flex items-center justify-center text-[10px] font-bold text-white">D</div>
-        <span className="font-mono text-sm font-semibold text-white tracking-wide">PROJECT DAEDALUS</span>
+        <img src="/logo.png" alt="Project Daedalus" className="w-7 h-7 object-contain" />
+        <span className="font-mono text-sm font-semibold text-[#1A1F36] tracking-wide">PROJECT DAEDALUS</span>
       </div>
 
       {NAV_ITEMS.map(({ to, label, icon, red }) => (
@@ -29,9 +29,9 @@ export default function NavBar() {
             `flex items-center gap-1.5 px-3 py-1 rounded text-[12px] font-mono transition-colors ${
               isActive
                 ? red
-                  ? 'bg-red-700/20 text-red-500 border border-red-700/40'
-                  : 'bg-accent/20 text-accent border border-accent/40'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-red-50 text-red-600 border border-red-200'
+                  : 'bg-accent/10 text-accent border border-accent/30'
+                : 'text-gray-500 hover:text-[#1A1F36] hover:bg-gray-100'
             }`
           }
         >
@@ -41,7 +41,7 @@ export default function NavBar() {
       ))}
 
       {moduleNum > 0 && (
-        <div className="ml-auto text-[10px] font-mono text-gray-600">MODULE {moduleNum}</div>
+        <div className="ml-auto text-[10px] font-mono text-gray-400">MODULE {moduleNum}</div>
       )}
     </nav>
   )

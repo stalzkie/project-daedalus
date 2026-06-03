@@ -29,10 +29,10 @@ function TwrBar({ twr }) {
   return (
     <div className="flex items-center gap-2 text-[10px] font-mono">
       <span className="text-gray-500 w-8">TWR</span>
-      <div className="flex-1 h-2 bg-gray-800 rounded overflow-hidden">
+      <div className="flex-1 h-2 bg-gray-100 rounded overflow-hidden">
         <div className={`h-full ${color} transition-all`} style={{ width: `${pct}%` }} />
       </div>
-      <span className={twr >= 1.0 ? 'text-green-400' : 'text-red-400'}>{twr.toFixed(2)}</span>
+      <span className={twr >= 1.0 ? 'text-green-600' : 'text-red-600'}>{twr.toFixed(2)}</span>
     </div>
   )
 }
@@ -42,10 +42,10 @@ function DvBar({ dv, totalDv }) {
   return (
     <div className="flex items-center gap-2 text-[10px] font-mono">
       <span className="text-gray-500 w-8">Δv</span>
-      <div className="flex-1 h-2 bg-gray-800 rounded overflow-hidden">
+      <div className="flex-1 h-2 bg-gray-100 rounded overflow-hidden">
         <div className="h-full bg-accent transition-all" style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-white w-20 text-right">{dv.toFixed(0)} m/s</span>
+      <span className="text-[#1A1F36] w-20 text-right">{dv.toFixed(0)} m/s</span>
     </div>
   )
 }
@@ -137,8 +137,8 @@ export default function MultiStageSimulator({ onStagesChange, prefillStages }) {
                       step={step}
                       value={stage[field]}
                       onChange={e => updateField(i, field, e.target.value)}
-                      className="flex-1 min-w-0 bg-navy-800/60 border border-accent/30 hover:border-accent/50
-                        rounded-l px-2 py-1 text-[11px] font-mono text-white focus:outline-none focus:border-accent"
+                      className="flex-1 min-w-0 bg-white border border-accent/30 hover:border-accent/50
+                        rounded-l px-2 py-1 text-[11px] font-mono text-[#1A1F36] focus:outline-none focus:border-accent"
                     />
                     <span className="bg-accent/15 border border-l-0 border-accent/30 rounded-r px-1.5
                       text-[9px] font-mono text-accent flex items-center whitespace-nowrap">
@@ -173,8 +173,8 @@ export default function MultiStageSimulator({ onStagesChange, prefillStages }) {
           <span className="text-[10px] font-mono text-accent uppercase tracking-widest">Mission Summary</span>
           <span className={`font-mono text-sm font-bold px-3 py-1 rounded border ${
             canReach
-              ? 'text-green-400 border-green-600 bg-green-900/30'
-              : 'text-red-400 border-red-600 bg-red-900/30'
+              ? 'text-green-700 border-green-400 bg-green-50'
+              : 'text-red-700 border-red-400 bg-red-50'
           }`}>
             {canReach ? `✓ CAN REACH ${targetOrbit.label}` : `✗ CANNOT REACH ${targetOrbit.label}`}
           </span>
@@ -190,7 +190,7 @@ export default function MultiStageSimulator({ onStagesChange, prefillStages }) {
               onClick={() => setTargetOrbitId(o.id)}
               className="text-[9px] font-mono px-2 py-0.5 rounded border transition-all"
               style={targetOrbitId === o.id
-                ? { background: 'rgba(27,108,168,0.3)', color: '#60A5FA', borderColor: 'rgba(27,108,168,0.7)' }
+                ? { background: 'rgba(27,108,168,0.12)', color: '#1B6CA8', borderColor: 'rgba(27,108,168,0.6)' }
                 : { background: 'transparent', color: '#6B7280', borderColor: 'rgba(27,108,168,0.2)' }
               }
             >
@@ -205,14 +205,14 @@ export default function MultiStageSimulator({ onStagesChange, prefillStages }) {
             <span>Total Δv</span>
             <span>{targetOrbit.desc}: ≥ {targetOrbit.dv.toLocaleString()} m/s</span>
           </div>
-          <div className="h-3 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all ${canReach ? 'bg-green-500' : 'bg-red-500'}`}
               style={{ width: `${Math.min(100, (sim.totalDeltaV_ms / targetOrbit.dv) * 100)}%` }}
             />
           </div>
           <div className="flex justify-between text-[10px] font-mono mt-1">
-            <span className={canReach ? 'text-green-400' : 'text-red-400'}>
+            <span className={canReach ? 'text-green-600' : 'text-red-600'}>
               {sim.totalDeltaV_ms.toFixed(0)} m/s
             </span>
             <span className="text-gray-500">{(sim.totalDeltaV_ms / targetOrbit.dv * 100).toFixed(0)}%</span>
@@ -224,26 +224,26 @@ export default function MultiStageSimulator({ onStagesChange, prefillStages }) {
           {stages.map((_, i) => (
             <div key={i} className="text-[10px] font-mono">
               <span className="text-gray-500">Stage {i + 1}: </span>
-              <span className="text-white">{(sim.stageDeltaVs[i] ?? 0).toFixed(0)} m/s</span>
+              <span className="text-[#1A1F36]">{(sim.stageDeltaVs[i] ?? 0).toFixed(0)} m/s</span>
               <span className="text-gray-600"> (cum. {(cumulative[i] ?? 0).toFixed(0)} m/s)</span>
             </div>
           ))}
         </div>
 
         <div className="mt-3 grid grid-cols-3 gap-2 text-[10px] font-mono">
-          <div className="bg-black/20 rounded p-2">
+          <div className="bg-[#F8FAFC] border border-accent/10 rounded p-2">
             <div className="text-gray-500 text-[8px] uppercase">Launch Mass</div>
-            <div className="text-white">{(sim.massAtEachStage?.[0] ?? 0).toLocaleString()} kg</div>
+            <div className="text-[#1A1F36]">{(sim.massAtEachStage?.[0] ?? 0).toLocaleString()} kg</div>
           </div>
-          <div className="bg-black/20 rounded p-2">
+          <div className="bg-[#F8FAFC] border border-accent/10 rounded p-2">
             <div className="text-gray-500 text-[8px] uppercase">Payload Mass</div>
-            <div className="text-white">
+            <div className="text-[#1A1F36]">
               {(sim.massAtEachStage?.[stages.length] ?? 0).toLocaleString()} kg
             </div>
           </div>
-          <div className="bg-black/20 rounded p-2">
+          <div className="bg-[#F8FAFC] border border-accent/10 rounded p-2">
             <div className="text-gray-500 text-[8px] uppercase">Mass fraction</div>
-            <div className="text-white">
+            <div className="text-[#1A1F36]">
               {sim.massAtEachStage?.[0] > 0
                 ? ((sim.massAtEachStage[stages.length] / sim.massAtEachStage[0]) * 100).toFixed(2)
                 : '—'}%

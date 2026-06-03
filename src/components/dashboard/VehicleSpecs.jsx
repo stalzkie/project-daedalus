@@ -5,11 +5,11 @@ function SpecRow({ label, value, unit, highlight }) {
   return (
     <div className={`flex items-center justify-between px-3 py-2 border-b border-accent/10 last:border-0 ${highlight ? 'bg-accent/5' : ''}`}>
       <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">{label}</span>
-      <span className="font-mono text-sm font-semibold text-white">
+      <span className="font-mono text-sm font-semibold text-[#1A1F36]">
         {displayValue !== '—' ? (
-          <>{displayValue}<span className="text-[10px] text-gray-500 ml-1">{unit}</span></>
+          <>{displayValue}<span className="text-[10px] text-gray-400 ml-1">{unit}</span></>
         ) : (
-          <span className="text-gray-600">N/A</span>
+          <span className="text-gray-400">N/A</span>
         )}
       </span>
     </div>
@@ -17,10 +17,10 @@ function SpecRow({ label, value, unit, highlight }) {
 }
 
 function StatBar({ value, max, color = 'bg-accent' }) {
-  if (value == null) return <div className="h-1 bg-gray-700 rounded" />
+  if (value == null) return <div className="h-1 bg-gray-200 rounded" />
   const pct = Math.min(100, (value / max) * 100)
   return (
-    <div className="h-1 bg-gray-800 rounded overflow-hidden">
+    <div className="h-1 bg-gray-100 rounded overflow-hidden">
       <div className={`h-full ${color} rounded transition-all`} style={{ width: `${pct}%` }} />
     </div>
   )

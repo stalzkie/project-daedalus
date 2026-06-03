@@ -12,8 +12,8 @@ const AGENCY_COLORS = [
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-navy-800 border border-accent/40 rounded p-2 text-[11px] font-mono shadow-xl"
-         style={{ background: '#0d2257' }}>
+    <div className="bg-white border border-accent/30 rounded p-2 text-[11px] font-mono shadow-lg"
+         style={{ color: '#1A1F36' }}>
       <div className="text-accent font-bold mb-1">Year {label}</div>
       {payload.map(p => (
         <div key={p.dataKey} style={{ color: p.color }}>
@@ -24,23 +24,21 @@ const CustomTooltip = ({ active, payload, label }) => {
   )
 }
 
-export default function SuccessRateChart({ launches, fetchedAt }) {
+export default function SuccessRateChart({ byYearAgency, fetchedAt, loading, partial, fetched, total }) {
   const [hiddenAgencies, setHiddenAgencies] = useState(new Set())
 
   const { chartData, agencies } = useMemo(() => {
+    if (!byYearAgency?.length) return { chartData: [], agencies: [] }
+
+    // Rebuild the agency→year→{total,success} map from pre-aggregated server data
     const agencyYearMap = {}
-    ;(launches || []).forEach(l => {
-      const year = new Date(l.net).getFullYear()
-      if (!year || isNaN(year)) return
-      const agency = l.launch_service_provider?.abbrev || l.launch_service_provider?.name || 'Unknown'
+    byYearAgency.forEach(({ agency, year, total, success }) => {
       if (!agencyYearMap[agency]) agencyYearMap[agency] = {}
-      if (!agencyYearMap[agency][year]) agencyYearMap[agency][year] = { total: 0, success: 0 }
-      agencyYearMap[agency][year].total++
-      if (l.status?.abbrev === 'Success') agencyYearMap[agency][year].success++
+      agencyYearMap[agency][year] = { total, success }
     })
 
     const agencies = Object.keys(agencyYearMap)
-    const yearSet = new Set()
+    const yearSet  = new Set()
     agencies.forEach(a => Object.keys(agencyYearMap[a]).forEach(y => yearSet.add(Number(y))))
     const years = [...yearSet].sort((a, b) => a - b)
 
@@ -54,7 +52,7 @@ export default function SuccessRateChart({ launches, fetchedAt }) {
     })
 
     return { chartData, agencies }
-  }, [launches])
+  }, [byYearAgency])
 
   function toggleAgency(agency) {
     setHiddenAgencies(prev => {
@@ -69,11 +67,15 @@ export default function SuccessRateChart({ launches, fetchedAt }) {
     <div className="panel p-4">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-[10px] font-mono text-accent tracking-widest uppercase">Success Rate by Year</span>
-        <span className="text-[10px] font-mono text-gray-500">— per agency, from loaded launches</span>
+        <span className="text-[10px] font-mono text-gray-500">— per agency, all launches</span>
+        {partial && fetched != null && total != null && (
+          <span className="text-[9px] font-mono text-amber-600 ml-1 animate-pulse">
+            {fetched.toLocaleString()}/{total.toLocaleString()} loaded…
+          </span>
+        )}
         <DataSourceTag source="LL2 v2.2.0 history" fetchedAt={fetchedAt} />
       </div>
 
-      {/* Agency filter chips */}
       {agencies.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-3">
           {agencies.map((a, i) => (
@@ -95,7 +97,12 @@ export default function SuccessRateChart({ launches, fetchedAt }) {
         </div>
       )}
 
-      {chartData.length === 0 && (
+      {(loading || partial) && !byYearAgency?.length && (
+        <div className="py-12 text-center text-gray-400 font-mono text-sm animate-pulse">
+          {total ? `Loaded ${fetched?.toLocaleString()} / ${total.toLocaleString()} launches…` : 'Aggregating launch history…'}
+        </div>
+      )}
+      {!loading && !partial && chartData.length === 0 && (
         <div className="py-12 text-center text-gray-500 font-mono text-sm">
           No launch data in current filter set.
         </div>
@@ -104,24 +111,24 @@ export default function SuccessRateChart({ launches, fetchedAt }) {
       {chartData.length > 0 && (
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(27,108,168,0.15)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.07)" />
             <XAxis
               dataKey="year"
-              tick={{ fill: '#9CA3AF', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
+              tick={{ fill: '#64748B', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
               tickLine={false}
               axisLine={{ stroke: 'rgba(27,108,168,0.3)' }}
             />
             <YAxis
               domain={[0, 100]}
               tickFormatter={v => `${v}%`}
-              tick={{ fill: '#9CA3AF', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
+              tick={{ fill: '#64748B', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
               tickLine={false}
               axisLine={{ stroke: 'rgba(27,108,168,0.3)' }}
               width={38}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend
-              wrapperStyle={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: '#9CA3AF' }}
+              wrapperStyle={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: '#64748B' }}
             />
             {agencies.map((agency, i) =>
               !hiddenAgencies.has(agency) && (

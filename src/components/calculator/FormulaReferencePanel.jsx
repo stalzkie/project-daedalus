@@ -19,7 +19,7 @@ const groupedFormulas = FORMULA_CONFIGS.reduce((acc, f) => {
 function MiniFormula({ latex }) {
   try {
     const html = katex.renderToString(latex, { throwOnError: false, displayMode: false })
-    return <span className="katex-dark text-[10px]" dangerouslySetInnerHTML={{ __html: html }} />
+    return <span className="text-[10px]" dangerouslySetInnerHTML={{ __html: html }} />
   } catch {
     return <code className="text-[9px] text-gray-400">{latex}</code>
   }
@@ -38,7 +38,7 @@ export default function FormulaReferencePanel({ onNavigate }) {
         className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center gap-1
           px-1.5 py-4 rounded-l border border-r-0 border-accent/40 font-mono text-[9px]
           transition-all duration-200 writing-mode-vertical
-          ${open ? 'bg-accent text-white' : 'bg-navy-800/90 text-accent hover:bg-accent/20'}`}
+          ${open ? 'bg-accent text-white' : 'bg-white text-accent border-accent/40 hover:bg-accent/10'}`}
         style={{ writingMode: 'vertical-rl' }}
         title="Formula Reference"
       >
@@ -50,7 +50,7 @@ export default function FormulaReferencePanel({ onNavigate }) {
         className={`fixed inset-y-0 right-0 z-30 w-72 flex flex-col border-l border-accent/30
           transition-transform duration-250 overflow-y-auto
           ${open ? 'translate-x-0' : 'translate-x-full'}`}
-        style={{ background: '#080f2e', top: 0, paddingTop: 48 }}
+        style={{ background: '#F8FAFC', top: 0, paddingTop: 48 }}
       >
         <div className="px-3 py-2 border-b border-accent/20">
           <div className="text-[10px] font-mono text-accent uppercase tracking-widest">Formula Reference</div>
@@ -63,7 +63,7 @@ export default function FormulaReferencePanel({ onNavigate }) {
               type="button"
               onClick={() => setExpandedTab(t => t === tab ? '' : tab)}
               className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-mono
-                text-gray-400 hover:text-white transition-colors"
+                text-gray-500 hover:text-[#1A1F36] transition-colors"
             >
               <span className="uppercase tracking-widest">{TAB_LABELS[tab] || tab}</span>
               <span className="text-gray-600">{expandedTab === tab ? '▲' : '▼'}</span>
@@ -78,7 +78,7 @@ export default function FormulaReferencePanel({ onNavigate }) {
                     onClick={() => { onNavigate?.(tab, f.id); setOpen(false) }}
                     className="w-full text-left px-3 py-2 hover:bg-accent/10 transition-colors group"
                   >
-                    <div className="text-[10px] font-semibold text-white group-hover:text-accent
+                    <div className="text-[10px] font-semibold text-[#1A1F36] group-hover:text-accent
                       transition-colors truncate">
                       {f.name}
                     </div>
@@ -107,7 +107,7 @@ export default function FormulaReferencePanel({ onNavigate }) {
           ].map(([sym, val, unit]) => (
             <div key={sym} className="flex items-baseline gap-2 text-[9px] font-mono py-0.5">
               <span className="text-accent w-8 shrink-0">{sym}</span>
-              <span className="text-white">{val}</span>
+              <span className="text-[#1A1F36]">{val}</span>
               <span className="text-gray-600">{unit}</span>
             </div>
           ))}

@@ -182,6 +182,24 @@ export function propagate_ground_track(satrec, start_ms, end_ms, step_ms = 60_00
 }
 
 /**
+ * Propagate a single position at currentMs, treating epochMs as the moment
+ * when mean_anomaly_deg = elements.mean_anomaly_deg.
+ * Returns { lat_deg, lng_deg, alt_km }
+ */
+export function propagate_at(elements, epochMs, currentMs) {
+  const { sma_km, eccentricity, mean_anomaly_deg } = elements
+  const n   = 2 * Math.PI / (compute_orbital_period_ms(sma_km) / 1000)
+  const M0  = mean_anomaly_deg * Math.PI / 180
+  const dt  = (currentMs - epochMs) / 1000
+  const M   = ((M0 + n * dt) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)
+  const E   = solveKepler(M, eccentricity)
+  const nu  = eccentricToTrue(E, eccentricity)
+  const eci = keplToEci(elements, nu)
+  const ecef = eciToEcef(eci, currentMs)
+  return ecefToGeodetic(ecef)
+}
+
+/**
  * Ground track from Keplerian elements (no TLE — approximate, perturb-free).
  */
 export function propagate_ground_track_from_elements(elements, start_ms, end_ms, step_ms = 60_000) {

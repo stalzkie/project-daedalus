@@ -156,7 +156,7 @@ export default function Calculator() {
   }[activeTab]
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#0B1F4B' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: '#F0F4F8' }}>
       <NavBar />
 
       {/* Sub-header */}
@@ -183,7 +183,7 @@ export default function Calculator() {
               className={`px-4 py-2 text-[11px] font-mono rounded-t border-b-2 transition-all ${
                 activeTab === tab.id
                   ? 'text-accent border-accent bg-accent/10'
-                  : 'text-gray-400 border-transparent hover:text-white hover:border-accent/40'
+                  : 'text-gray-400 border-transparent hover:text-[#1A1F36] hover:border-accent/40'
               }`}
             >
               {tab.label}

@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import DataSourceTag from './DataSourceTag'
 
 const STATUS_COLOR = {
-  Go:   'text-green-400 border-green-500/50 bg-green-900/30',
-  Hold: 'text-red-400 border-red-500/50 bg-red-900/30',
-  TBD:  'text-gray-400 border-gray-500/50 bg-gray-900/30',
-  TBC:  'text-yellow-400 border-yellow-500/50 bg-yellow-900/30',
+  Go:   'text-green-700 border-green-300 bg-green-50',
+  Hold: 'text-red-700 border-red-300 bg-red-50',
+  TBD:  'text-gray-600 border-gray-300 bg-gray-50',
+  TBC:  'text-yellow-700 border-yellow-300 bg-yellow-50',
 }
 
 function tMinus(netISO) {
@@ -58,7 +58,7 @@ export default function NextLaunchCard({ launch, fetchedAt }) {
             <span className="text-[10px] font-mono text-gray-500 tracking-widest uppercase">Next Launch</span>
             <DataSourceTag source="LL2 v2.2.0" fetchedAt={fetchedAt} />
           </div>
-          <h1 className="text-xl font-bold text-white leading-tight truncate" title={launch.name}>
+          <h1 className="text-xl font-bold text-[#1A1F36] leading-tight truncate" title={launch.name}>
             {launch.name}
           </h1>
           <div className="text-sm text-accent-light mt-0.5">{provider}</div>
@@ -78,9 +78,9 @@ export default function NextLaunchCard({ launch, fetchedAt }) {
       </div>
 
       {/* Countdown */}
-      <div className="bg-navy-800/60 border border-accent/20 rounded p-3 mb-4 text-center">
-        <div className="font-mono text-3xl font-bold tracking-widest text-white">{countdown}</div>
-        <div className="text-[10px] font-mono text-gray-400 mt-1">
+      <div className="bg-[#F1F5F9] border border-[rgba(0,0,0,0.07)] rounded p-3 mb-4 text-center">
+        <div className="font-mono text-3xl font-bold tracking-widest text-[#1A1F36]">{countdown}</div>
+        <div className="text-[10px] font-mono text-gray-500 mt-1">
           NET {formatNET(launch.net)}
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function NextLaunchCard({ launch, fetchedAt }) {
         <Field label="Wx Probability" value={probability} />
         {launch.status?.abbrev === 'Hold' && launch.holdreason && (
           <div className="col-span-full">
-            <Field label="Hold Reason" value={launch.holdreason} className="text-red-300" />
+            <Field label="Hold Reason" value={launch.holdreason} className="text-red-600" />
           </div>
         )}
       </div>
@@ -104,7 +104,7 @@ export default function NextLaunchCard({ launch, fetchedAt }) {
       {launch.mission?.description && (
         <div className="mt-4 border-t border-accent/20 pt-3">
           <div className="text-[10px] font-mono text-accent tracking-widest uppercase mb-1">Mission Overview</div>
-          <p className="text-[12px] text-gray-300 leading-relaxed">
+          <p className="text-[12px] text-gray-600 leading-relaxed">
             {launch.mission.description}
           </p>
         </div>
@@ -114,9 +114,9 @@ export default function NextLaunchCard({ launch, fetchedAt }) {
       <div className="mt-3 border-t border-accent/20 pt-3">
         <button
           type="button"
-          onClick={() => navigate(`/orbit/${launch.id}`)}
+          onClick={() => navigate(`/orbit/${launch.id}`, { state: { launch } })}
           className="flex items-center gap-2 text-[11px] font-mono px-3 py-2 rounded border w-full justify-center
-            text-accent hover:text-white hover:bg-accent/20 border-accent/30 hover:border-accent/60 transition-all"
+            text-accent hover:text-white hover:bg-accent border-accent/30 hover:border-accent transition-all"
         >
           <span>◎</span>
           View 3D Orbit
@@ -130,7 +130,7 @@ function Field({ label, value, mono, className }) {
   return (
     <div>
       <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-0.5">{label}</div>
-      <div className={`${mono ? 'font-mono' : ''} text-white font-medium ${className || ''}`}>{value}</div>
+      <div className={`${mono ? 'font-mono' : ''} text-[#1A1F36] font-medium ${className || ''}`}>{value}</div>
     </div>
   )
 }

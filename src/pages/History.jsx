@@ -101,11 +101,13 @@ export default function History() {
     retry: (count, err) => !err?.isRateLimit && count < 2,
   })
 
-  const { data: chartData } = useQuery({
+  const { data: chartData, isLoading: chartLoading } = useQuery({
     queryKey: ['history-chart', filters, sorting],
     queryFn: () => fetchChartData({ filters, sorting }),
     staleTime: 60_000,
     retry: (count, err) => !err?.isRateLimit && count < 2,
+    // Auto-retry every 60 s when the server returned partial data (rate-limited mid-fetch)
+    refetchInterval: (data) => data?.partial ? 60_000 : false,
   })
 
   const isRateLimit = isError && error?.isRateLimit
@@ -116,11 +118,6 @@ export default function History() {
     [data?.results, filters]
   )
 
-  // Use full-history chart data when loaded; fall back to current page while loading
-  const chartLaunches = useMemo(
-    () => applyPayloadFilter(chartData?.results ?? data?.results, filters),
-    [chartData?.results, data?.results, filters]
-  )
   const total    = data?.count ?? 0
   const fetchedAt = dataUpdatedAt ? new Date(dataUpdatedAt).toISOString() : null
 
@@ -161,11 +158,11 @@ export default function History() {
   const activeFilterCount = countActiveFilters(filters)
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#0B1F4B' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: '#F0F4F8' }}>
       <NavBar />
 
       {/* Sub-header */}
-      <div className="border-b border-accent/20 px-4 py-1.5 flex items-center gap-3">
+      <div className="bg-white border-b border-[rgba(27,108,168,0.12)] px-4 py-1.5 flex items-center gap-3">
         <span className="text-[11px] font-mono text-gray-500">MODULE 2 · LAUNCH HISTORY & COMPARISON</span>
         <div className="ml-auto flex items-center gap-3 text-[10px] font-mono">
           {isLoading && (
@@ -174,15 +171,15 @@ export default function History() {
               Fetching…
             </span>
           )}
-          {isError && !isRateLimit && <span className="text-red-400">API error</span>}
+          {isError && !isRateLimit && <span className="text-red-500">API error</span>}
           <BudgetPill budget={apiStatus?.budget} />
-          <span className={`px-1.5 py-0.5 rounded ${isError ? 'bg-red-900/50 text-red-400' : 'bg-accent/20 text-accent'}`}>
+          <span className={`px-1.5 py-0.5 rounded ${isError ? 'bg-red-100 text-red-600' : 'bg-accent/10 text-accent'}`}>
             {isError ? 'ERR' : isLoading ? 'LOADING' : `${total.toLocaleString()} launches`}
           </span>
           <button
             type="button"
             onClick={() => setChartsVisible(v => !v)}
-            className="text-gray-400 hover:text-white text-[10px] border border-accent/20 px-2 py-0.5 rounded"
+            className="text-gray-500 hover:text-[#1A1F36] text-[10px] border border-accent/20 px-2 py-0.5 rounded hover:bg-gray-100"
           >
             {chartsVisible ? 'Hide Charts' : 'Show Charts'}
           </button>
@@ -192,7 +189,7 @@ export default function History() {
       {/* Main layout: sidebar + content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Filter sidebar */}
-        <div className="shrink-0 overflow-y-auto border-r border-accent/20" style={{ width: 256 }}>
+        <div className="shrink-0 overflow-y-auto bg-white border-r border-[rgba(27,108,168,0.12)]" style={{ width: 256 }}>
           <FilterPanel
             filters={filters}
             onChange={handleFilterChange}
@@ -205,10 +202,10 @@ export default function History() {
         <main className="flex-1 overflow-y-auto p-4 space-y-4">
           {isRateLimit && (
             <div className="panel p-4 font-mono text-sm text-center">
-              <div className="text-yellow-400 text-base mb-2">⚠ LL2 API Rate Limit Exceeded</div>
-              <div className="text-gray-300 text-[12px] leading-relaxed">
-                Anonymous access allows <strong className="text-white">15 requests/hour</strong>.
-                This page will automatically retry in <strong className="text-white">~1 hour</strong>.
+              <div className="text-amber-600 text-base mb-2">⚠ LL2 API Rate Limit Exceeded</div>
+              <div className="text-gray-600 text-[12px] leading-relaxed">
+                Anonymous access allows <strong className="text-[#1A1F36]">15 requests/hour</strong>.
+                This page will automatically retry in <strong className="text-[#1A1F36]">~1 hour</strong>.
               </div>
               <div className="mt-2 text-[11px] text-gray-500">
                 Add your SpaceDevs token to <code className="text-accent">VITE_LL2_API_KEY</code> in <code className="text-accent">.env</code> for 300 req/hr.
@@ -216,7 +213,7 @@ export default function History() {
             </div>
           )}
           {isError && !isRateLimit && (
-            <div className="panel p-4 text-red-400 font-mono text-sm text-center">
+            <div className="panel p-4 text-red-600 font-mono text-sm text-center">
               Failed to fetch launch history. Is the API server running on port 3001?
             </div>
           )}
@@ -251,12 +248,22 @@ export default function History() {
           {/* Charts */}
           {chartsVisible && (
             <>
-              <SuccessRateChart launches={chartLaunches} fetchedAt={fetchedAt} />
+              <SuccessRateChart
+                byYearAgency={chartData?.byYearAgency}
+                fetchedAt={fetchedAt}
+                loading={chartLoading}
+                partial={chartData?.partial}
+                fetched={chartData?.fetched}
+                total={chartData?.total}
+              />
 
               <PayloadScatterPlot
-                launches={chartLaunches}
+                payloadScatter={chartData?.payloadScatter}
+                filters={filters}
                 onPointClick={handleScatterClick}
                 fetchedAt={fetchedAt}
+                loading={chartLoading}
+                partial={chartData?.partial}
               />
             </>
           )}

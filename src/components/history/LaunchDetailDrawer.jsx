@@ -5,12 +5,12 @@ import OrbitLoadingFallback from '../orbit/OrbitLoadingFallback'
 const OrbitViewer = lazy(() => import('../orbit/OrbitViewer'))
 
 const STATUS_COLOR = {
-  Success:          'text-green-400 border-green-600 bg-green-900/30',
-  Failure:          'text-red-400 border-red-600 bg-red-900/30',
-  'Partial Failure':'text-orange-400 border-orange-600 bg-orange-900/30',
-  Go:               'text-green-400 border-green-600 bg-green-900/30',
-  Hold:             'text-red-400 border-red-600 bg-red-900/30',
-  TBD:              'text-gray-400 border-gray-600 bg-gray-900/30',
+  Success:          'text-green-700 border-green-300 bg-green-50',
+  Failure:          'text-red-700 border-red-300 bg-red-50',
+  'Partial Failure':'text-orange-700 border-orange-300 bg-orange-50',
+  Go:               'text-green-700 border-green-300 bg-green-50',
+  Hold:             'text-red-700 border-red-300 bg-red-50',
+  TBD:              'text-gray-600 border-gray-300 bg-gray-100',
 }
 
 function Field({ label, value, mono }) {
@@ -18,7 +18,7 @@ function Field({ label, value, mono }) {
   return (
     <div>
       <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-0.5">{label}</div>
-      <div className={`text-[12px] text-white ${mono ? 'font-mono' : ''}`}>{value}</div>
+      <div className={`text-[12px] text-[#1A1F36] ${mono ? 'font-mono' : ''}`}>{value}</div>
     </div>
   )
 }
@@ -76,7 +76,7 @@ export default function LaunchDetailDrawer({ launch, onClose }) {
         className={`fixed inset-y-0 right-0 w-[480px] max-w-full z-50 flex flex-col
           border-l border-accent/30 overflow-y-auto transition-transform duration-300
           ${open ? 'translate-x-0' : 'translate-x-full'}`}
-        style={{ background: '#0B1F4B' }}
+        style={{ background: '#FFFFFF' }}
       >
         {!launch ? null : (
           <>
@@ -89,8 +89,8 @@ export default function LaunchDetailDrawer({ launch, onClose }) {
                   onClick={() => setActiveTab(tab)}
                   className="text-[10px] font-mono px-3 py-1.5 rounded-t border-b-2 transition-all capitalize"
                   style={activeTab === tab
-                    ? { borderColor: '#1B6CA8', color: '#60A5FA', background: 'rgba(27,108,168,0.1)' }
-                    : { borderColor: 'transparent', color: '#6B7280' }
+                    ? { borderColor: '#1B6CA8', color: '#1B6CA8', background: 'rgba(27,108,168,0.08)' }
+                    : { borderColor: 'transparent', color: '#64748B' }
                   }
                 >
                   {tab === '3d orbit' ? '◎ 3D Orbit' : '≡ Details'}
@@ -98,8 +98,8 @@ export default function LaunchDetailDrawer({ launch, onClose }) {
               ))}
               <button
                 type="button"
-                onClick={() => navigate(`/orbit/${launch.id}`)}
-                className="ml-auto text-[9px] font-mono px-2 py-1 rounded border text-gray-400 hover:text-white transition-colors mb-1"
+                onClick={() => navigate(`/orbit/${launch.id}`, { state: { launch } })}
+                className="ml-auto text-[9px] font-mono px-2 py-1 rounded border text-gray-500 hover:text-[#1A1F36] hover:bg-gray-100 transition-colors mb-1"
                 style={{ borderColor: 'rgba(27,108,168,0.3)' }}
               >
                 ↗ Fullscreen
@@ -125,13 +125,13 @@ export default function LaunchDetailDrawer({ launch, onClose }) {
                     {launch.net ? new Date(launch.net).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'}
                   </span>
                 </div>
-                <h2 className="text-base font-bold text-white leading-snug">{launch.name}</h2>
+                <h2 className="text-base font-bold text-[#1A1F36] leading-snug">{launch.name}</h2>
                 <div className="text-[12px] text-accent mt-0.5">{launch.launch_service_provider?.name}</div>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="text-gray-500 hover:text-white text-xl leading-none shrink-0"
+                className="text-gray-400 hover:text-[#1A1F36] text-xl leading-none shrink-0"
                 aria-label="Close"
               >
                 ✕
@@ -155,14 +155,21 @@ export default function LaunchDetailDrawer({ launch, onClose }) {
                             mean_anomaly_deg: 0,
                           }
                         : null,
-                      orbitAbbrev: launch.mission?.orbit?.abbrev || 'LEO',
-                      launchName:  launch.name,
+                      orbitAbbrev:        launch.mission?.orbit?.abbrev || 'LEO',
+                      launchName:         launch.name,
                       launchSite: {
                         lat:  launch.pad?.latitude  ? parseFloat(launch.pad.latitude)  : null,
                         lng:  launch.pad?.longitude ? parseFloat(launch.pad.longitude) : null,
                         name: launch.pad?.name || 'Launch Site',
                       },
-                      tle: null,
+                      tle:                null,
+                      imageUrl:           launch.image?.image_url || null,
+                      missionDescription: launch.mission?.description || null,
+                      vehicleName:        launch.rocket?.configuration?.full_name
+                                          || launch.rocket?.configuration?.name || null,
+                      provider:           launch.launch_service_provider?.name || null,
+                      status:             launch.status?.abbrev || null,
+                      net:                launch.net || null,
                     }}
                     height={400}
                   />
@@ -183,7 +190,7 @@ export default function LaunchDetailDrawer({ launch, onClose }) {
                   <Field label="Orbit Abbrev" value={launch.mission?.orbit?.abbrev} mono />
                 </div>
                 {launch.mission?.description && (
-                  <p className="mt-2 text-[11px] text-gray-300 leading-relaxed border-t border-accent/10 pt-2">
+                  <p className="mt-2 text-[11px] text-gray-600 leading-relaxed border-t border-accent/10 pt-2">
                     {launch.mission.description}
                   </p>
                 )}
@@ -235,7 +242,7 @@ export default function LaunchDetailDrawer({ launch, onClose }) {
                   <Field label="Probability"  value={launch.probability != null ? `${launch.probability}%` : null} />
                 </div>
                 {launch.holdreason && (
-                  <div className="mt-2 text-[11px] text-red-300 font-mono">Hold: {launch.holdreason}</div>
+                  <div className="mt-2 text-[11px] text-red-600 font-mono">Hold: {launch.holdreason}</div>
                 )}
               </section>
             </div>

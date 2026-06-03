@@ -103,7 +103,7 @@ export default function ExportCitePanel({ filters, fetchedAt, launches }) {
             className={`text-[10px] font-mono px-2 py-1 rounded border transition-all ${
               format === f.id
                 ? 'bg-accent text-white border-accent'
-                : 'border-accent/30 text-gray-400 hover:text-white hover:border-accent/60'
+                : 'border-accent/30 text-gray-400 hover:text-[#1A1F36] hover:border-accent/60'
             }`}
           >
             {f.label}
@@ -112,7 +112,7 @@ export default function ExportCitePanel({ filters, fetchedAt, launches }) {
       </div>
 
       {/* Citation text */}
-      <pre className="text-[11px] font-mono text-gray-300 bg-black/30 border border-accent/20 rounded p-3 whitespace-pre-wrap leading-relaxed mb-3">
+      <pre className="text-[11px] font-mono text-gray-600 bg-[#F8FAFC] border border-accent/20 rounded p-3 whitespace-pre-wrap leading-relaxed mb-3">
         {citation}
       </pre>
 
@@ -128,7 +128,7 @@ export default function ExportCitePanel({ filters, fetchedAt, launches }) {
           type="button"
           onClick={exportTableCSV}
           disabled={!launches?.length}
-          className="text-[10px] font-mono px-3 py-1.5 border border-accent/30 text-gray-400 hover:text-white hover:border-accent/60 rounded transition-colors disabled:opacity-40"
+          className="text-[10px] font-mono px-3 py-1.5 border border-accent/30 text-gray-400 hover:text-[#1A1F36] hover:border-accent/60 rounded transition-colors disabled:opacity-40"
         >
           ↓ Export Table as CSV
         </button>

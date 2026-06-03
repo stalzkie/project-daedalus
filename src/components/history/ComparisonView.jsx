@@ -57,9 +57,9 @@ function deltaClass(vals, idx, higherBetter) {
   const max = Math.max(...nums)
   const min = Math.min(...nums)
   if (max === min) return ''
-  if (v === max) return higherBetter ? 'text-green-400' : 'text-red-400'
-  if (v === min) return higherBetter ? 'text-red-400' : 'text-green-400'
-  return 'text-yellow-400'
+  if (v === max) return higherBetter ? 'text-green-600' : 'text-red-600'
+  if (v === min) return higherBetter ? 'text-red-600' : 'text-green-600'
+  return 'text-yellow-600'
 }
 
 function exportCSV(launches) {
@@ -96,7 +96,7 @@ export default function ComparisonView({ launches, onRemove }) {
   return (
     <div className="panel" id="comparison-view">
       {/* Sticky header */}
-      <div className="sticky top-0 z-10 border-b border-accent/30" style={{ background: '#0B1F4B' }}>
+      <div className="sticky top-0 z-10 border-b border-accent/30" style={{ background: '#EDF1F7' }}>
         <div className="flex items-center px-3 py-2 gap-3 border-b border-accent/20">
           <span className="text-[10px] font-mono text-accent tracking-widest uppercase">
             Mission Comparison ({launches.length})
@@ -104,7 +104,7 @@ export default function ComparisonView({ launches, onRemove }) {
           <button
             type="button"
             onClick={() => exportCSV(launches)}
-            className="ml-auto text-[10px] font-mono px-2 py-1 border border-accent/30 rounded text-gray-400 hover:text-white hover:border-accent/60 transition-colors"
+            className="ml-auto text-[10px] font-mono px-2 py-1 border border-accent/30 rounded text-gray-400 hover:text-[#1A1F36] hover:border-accent/60 hover:bg-gray-100 transition-colors"
           >
             ↓ Export CSV
           </button>
@@ -117,7 +117,7 @@ export default function ComparisonView({ launches, onRemove }) {
             <div key={l.id} className="px-2 py-2 border-l border-accent/20">
               <div className="flex items-start justify-between gap-1">
                 <div className="flex-1 min-w-0">
-                  <div className="text-[10px] font-bold text-white leading-tight truncate" title={l.name}>
+                  <div className="text-[10px] font-bold text-[#1A1F36] leading-tight truncate" title={l.name}>
                     {l.mission?.name || l.name}
                   </div>
                   <div className="text-[9px] font-mono text-gray-500 mt-0.5">
@@ -144,7 +144,7 @@ export default function ComparisonView({ launches, onRemove }) {
           <button
             type="button"
             onClick={() => toggleGroup(group.id)}
-            className="w-full flex items-center gap-2 px-3 py-1.5 text-[10px] font-mono text-accent uppercase tracking-widest hover:bg-white/5 transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-1.5 text-[10px] font-mono text-accent uppercase tracking-widest hover:bg-gray-50 transition-colors"
           >
             <span>{collapsed[group.id] ? '▶' : '▼'}</span>
             {group.label}
@@ -161,12 +161,12 @@ export default function ComparisonView({ launches, onRemove }) {
                 className="grid gap-px border-t border-accent/10"
                 style={{ gridTemplateColumns: `180px repeat(${launches.length}, 1fr)` }}
               >
-                <div className="px-3 py-1.5 text-[10px] font-mono text-gray-500 bg-navy-800/30">
+                <div className="px-3 py-1.5 text-[10px] font-mono text-gray-500 bg-[#F8FAFC]">
                   {param.label}
                 </div>
                 {vals.map((v, idx) => {
                   const display = v == null ? '—' : (param.fmt ? param.fmt(v) : String(v))
-                  const cls = param.numeric ? deltaClass(vals, idx, param.higherBetter) : 'text-gray-300'
+                  const cls = param.numeric ? deltaClass(vals, idx, param.higherBetter) : 'text-gray-600'
                   return (
                     <div key={launches[idx].id} className="px-2 py-1.5 border-l border-accent/10">
                       <span className={`text-[11px] ${param.numeric ? 'font-mono' : ''} ${cls}`}>
@@ -183,10 +183,10 @@ export default function ComparisonView({ launches, onRemove }) {
 
       {/* Legend */}
       <div className="flex items-center gap-4 px-3 py-2 text-[9px] font-mono text-gray-600">
-        <span className="text-green-400">■</span> Higher / better
-        <span className="text-red-400">■</span> Lower / worse
-        <span className="text-yellow-400">■</span> Intermediate
-        <span className="text-gray-500">■</span> Categorical (no delta)
+        <span className="text-green-600">■</span> Higher / better
+        <span className="text-red-600">■</span> Lower / worse
+        <span className="text-yellow-600">■</span> Intermediate
+        <span className="text-gray-400">■</span> Categorical (no delta)
       </div>
     </div>
   )

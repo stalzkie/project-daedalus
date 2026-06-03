@@ -9,8 +9,8 @@ function SpecRow({ label, value, unit }) {
   return (
     <div className="flex items-center justify-between py-1.5 border-b" style={{ borderColor: 'rgba(185,28,28,0.1)' }}>
       <span className="text-[9px] font-mono text-gray-500 uppercase tracking-widest">{label}</span>
-      <span className="font-mono text-[11px] font-semibold text-white">
-        {value != null ? <>{value}<span className="text-[9px] text-gray-500 ml-1">{unit}</span></> : <span className="text-gray-600">N/A</span>}
+      <span className="font-mono text-[11px] font-semibold text-[#1A1F36]">
+        {value != null ? <>{value}<span className="text-[9px] text-gray-500 ml-1">{unit}</span></> : <span className="text-gray-400">N/A</span>}
       </span>
     </div>
   )
@@ -109,7 +109,7 @@ export default function FailureDetailPanel({ failure, onClose }) {
       className={`fixed inset-y-0 right-0 w-[460px] max-w-full z-50 flex flex-col overflow-y-auto
         border-l transition-transform duration-300`}
       style={{
-        background: '#0B1F4B',
+        background: '#F0F4F8',
         borderColor: 'rgba(185,28,28,0.35)',
         transform: open ? 'translateX(0)' : 'translateX(100%)',
       }}
@@ -122,11 +122,11 @@ export default function FailureDetailPanel({ failure, onClose }) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 {fp?.severity === 'partial' ? (
-                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border bg-amber-900/50 text-amber-400 border-amber-700">
+                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border bg-amber-50 text-amber-700 border-amber-400">
                     PARTIAL
                   </span>
                 ) : (
-                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border bg-red-900/50 text-red-400 border-red-700">
+                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border bg-red-50 text-red-700 border-red-400">
                     TOTAL LOSS
                   </span>
                 )}
@@ -142,13 +142,13 @@ export default function FailureDetailPanel({ failure, onClose }) {
                   {failure.net ? new Date(failure.net).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'}
                 </span>
               </div>
-              <h2 className="text-sm font-bold text-white leading-snug">{failure.name}</h2>
+              <h2 className="text-sm font-bold text-[#1A1F36] leading-snug">{failure.name}</h2>
               <div className="text-[11px] mt-0.5" style={{ color: '#B91C1C' }}>
                 {failure.launch_service_provider?.name}
               </div>
             </div>
             <button type="button" onClick={onClose}
-                    className="text-gray-500 hover:text-white text-xl leading-none shrink-0">✕</button>
+                    className="text-gray-500 hover:text-[#1A1F36] text-xl leading-none shrink-0">✕</button>
           </div>
 
           <div className="p-4 space-y-5 flex-1">
@@ -166,8 +166,8 @@ export default function FailureDetailPanel({ failure, onClose }) {
               <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-2">
                 Official Failure Reason
               </div>
-              <div className="rounded border p-3 text-[11px] font-mono text-gray-200 leading-relaxed"
-                   style={{ background: 'rgba(185,28,28,0.06)', borderColor: 'rgba(185,28,28,0.25)' }}>
+              <div className="rounded border p-3 text-[11px] font-mono text-gray-700 leading-relaxed"
+                   style={{ background: 'rgba(185,28,28,0.04)', borderColor: 'rgba(185,28,28,0.2)' }}>
                 {failure.failreason || (
                   <span className="text-gray-600 italic">
                     Not available — Space-Track SATCAT does not record failure reasons.
@@ -194,7 +194,7 @@ export default function FailureDetailPanel({ failure, onClose }) {
                   ].filter(([, v]) => v != null).map(([label, value]) => (
                     <div key={label}>
                       <div className="text-[8px] font-mono text-gray-600 uppercase tracking-widest">{label}</div>
-                      <div className="text-[11px] font-mono text-gray-200">{value}</div>
+                      <div className="text-[11px] font-mono text-[#1A1F36]">{value}</div>
                     </div>
                   ))}
                 </div>
@@ -205,7 +205,7 @@ export default function FailureDetailPanel({ failure, onClose }) {
             {failure.mission?.description && (
               <section>
                 <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-2">Mission</div>
-                <p className="text-[11px] text-gray-300 leading-relaxed">{failure.mission.description}</p>
+                <p className="text-[11px] text-gray-600 leading-relaxed">{failure.mission.description}</p>
               </section>
             )}
 
@@ -213,7 +213,7 @@ export default function FailureDetailPanel({ failure, onClose }) {
             {failure.pad && (
               <section>
                 <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-2">Launch Site</div>
-                <div className="text-[11px] text-gray-300 font-mono">
+                <div className="text-[11px] text-gray-600 font-mono">
                   {failure.pad.name}
                   {failure.pad.location?.name && <span className="text-gray-500"> · {failure.pad.location.name}</span>}
                 </div>
@@ -230,7 +230,7 @@ export default function FailureDetailPanel({ failure, onClose }) {
               <button
                 type="button"
                 onClick={() => navigate(`/history?mission=${encodeURIComponent(failure.name)}`)}
-                className="text-[11px] font-mono px-3 py-2 rounded border text-gray-300 hover:text-white transition-colors text-left"
+                className="text-[11px] font-mono px-3 py-2 rounded border text-gray-600 hover:text-[#1A1F36] transition-colors text-left"
                 style={{ borderColor: 'rgba(185,28,28,0.3)' }}
               >
                 ↗ View in History
@@ -238,7 +238,7 @@ export default function FailureDetailPanel({ failure, onClose }) {
               <button
                 type="button"
                 onClick={() => exportPDF(failure)}
-                className="text-[11px] font-mono px-3 py-2 rounded border text-gray-300 hover:text-white transition-colors text-left"
+                className="text-[11px] font-mono px-3 py-2 rounded border text-gray-600 hover:text-[#1A1F36] transition-colors text-left"
                 style={{ borderColor: 'rgba(185,28,28,0.3)' }}
               >
                 ↓ Export Failure Report (PDF)

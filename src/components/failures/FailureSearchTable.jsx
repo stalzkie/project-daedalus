@@ -38,11 +38,11 @@ function EmptyState() {
 
 function SeverityBadge({ severity }) {
   const styles = {
-    total:   'bg-red-900/50 text-red-400 border-red-700',
-    partial: 'bg-amber-900/50 text-amber-400 border-amber-700',
+    total:   'bg-red-50 text-red-700 border-red-400',
+    partial: 'bg-amber-50 text-amber-700 border-amber-400',
   }
   const labels = { total: 'Total Loss', partial: 'Partial' }
-  const s = styles[severity] || 'bg-gray-800 text-gray-400 border-gray-600'
+  const s = styles[severity] || 'bg-gray-100 text-gray-600 border-gray-300'
   return (
     <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${s}`}>
       {labels[severity] || '—'}
@@ -68,7 +68,7 @@ const columns = [
   colHelper.accessor('net', {
     header: 'Date',
     cell: i => (
-      <span className="font-mono text-[11px] text-gray-300 whitespace-nowrap">
+      <span className="font-mono text-[11px] text-gray-600 whitespace-nowrap">
         {i.getValue() ? new Date(i.getValue()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) : '—'}
       </span>
     ),
@@ -77,7 +77,7 @@ const columns = [
   colHelper.accessor('name', {
     header: 'Mission',
     cell: i => (
-      <span className="text-[11px] font-medium text-white max-w-[200px] block truncate" title={i.getValue()}>
+      <span className="text-[11px] font-medium text-[#1A1F36] max-w-[200px] block truncate" title={i.getValue()}>
         {i.getValue() || '—'}
       </span>
     ),
@@ -86,13 +86,13 @@ const columns = [
   colHelper.accessor(r => r.rocket?.configuration?.family, {
     id: 'family',
     header: 'Rocket Family',
-    cell: i => <span className="text-[11px] text-gray-300 font-mono">{i.getValue() || '—'}</span>,
+    cell: i => <span className="text-[11px] text-gray-600 font-mono">{i.getValue() || '—'}</span>,
     enableSorting: true,
   }),
   colHelper.accessor(r => r.launch_service_provider?.abbrev || r.launch_service_provider?.name, {
     id: 'agency',
     header: 'Agency',
-    cell: i => <span className="text-[11px] text-gray-300 max-w-[100px] block truncate">{i.getValue() || '—'}</span>,
+    cell: i => <span className="text-[11px] text-gray-600 max-w-[100px] block truncate">{i.getValue() || '—'}</span>,
     enableSorting: true,
   }),
   colHelper.accessor(r => r.failureProfile?.stage, {
@@ -237,8 +237,8 @@ export default function FailureSearchTable({ failures, isLoading, fetchedAt, onR
             placeholder="Search missions, failure reasons…"
             value={searchText}
             onChange={e => { setSearchText(e.target.value); setPagination(p => ({ ...p, pageIndex: 0 })) }}
-            className="w-full text-[11px] font-mono px-3 py-1.5 rounded border text-white placeholder-gray-600 focus:outline-none"
-            style={{ background: 'rgba(13,34,87,0.8)', borderColor: 'rgba(185,28,28,0.35)' }}
+            className="w-full text-[11px] font-mono px-3 py-1.5 rounded border text-[#1A1F36] placeholder-gray-400 focus:outline-none bg-white"
+            style={{ borderColor: 'rgba(185,28,28,0.35)' }}
           />
         </div>
         {isLoading && (
@@ -276,7 +276,7 @@ export default function FailureSearchTable({ failures, isLoading, fetchedAt, onR
                         className="px-3 py-2 text-[9px] font-mono text-gray-500 uppercase tracking-widest whitespace-nowrap select-none"
                       >
                         <div
-                          className={`flex items-center gap-1 ${header.column.getCanSort() ? 'cursor-pointer hover:text-white' : ''}`}
+                          className={`flex items-center gap-1 ${header.column.getCanSort() ? 'cursor-pointer hover:text-[#1A1F36]' : ''}`}
                           onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
                         >
                           {flexRender(header.column.columnDef.header, header.getContext())}
@@ -296,7 +296,7 @@ export default function FailureSearchTable({ failures, isLoading, fetchedAt, onR
                       <tr
                         key={row.id}
                         onClick={() => onRowClick?.(row.original)}
-                        className="border-b cursor-pointer transition-colors hover:bg-red-950/20"
+                        className="border-b cursor-pointer transition-colors hover:bg-red-50/70"
                         style={{
                           borderColor: 'rgba(185,28,28,0.1)',
                           borderLeft: isPartial ? '2px solid #D97706' : '2px solid transparent',
@@ -333,7 +333,7 @@ export default function FailureSearchTable({ failures, isLoading, fetchedAt, onR
                   type="button"
                   onClick={btn.fn}
                   disabled={btn.disabled}
-                  className="w-7 h-7 flex items-center justify-center font-mono text-[12px] rounded border text-gray-400 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="w-7 h-7 flex items-center justify-center font-mono text-[12px] rounded border text-gray-400 hover:text-[#1A1F36] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{ borderColor: 'rgba(185,28,28,0.25)' }}
                 >
                   {btn.label}

@@ -63,7 +63,7 @@ export default function LaunchSiteMap({ launch, fetchedAt }) {
             <Popup>
               <div className="font-mono text-xs leading-relaxed">
                 <div className="font-bold text-white mb-1">{padName}</div>
-                <div className="text-gray-300">{padLocation}</div>
+                <div className="text-gray-600">{padLocation}</div>
                 <div className="text-gray-400 mt-1">ICAO: {icao}</div>
                 <div className="text-gray-500 text-[10px] mt-1">
                   {lat.toFixed(4)}°, {lng.toFixed(4)}°
@@ -77,15 +77,15 @@ export default function LaunchSiteMap({ launch, fetchedAt }) {
       <div className="mt-2 grid grid-cols-3 gap-2 text-[10px] font-mono">
         <div>
           <span className="text-gray-500">LAT </span>
-          <span className="text-white">{lat.toFixed(4)}°</span>
+          <span className="text-[#1A1F36]">{lat.toFixed(4)}°</span>
         </div>
         <div>
           <span className="text-gray-500">LNG </span>
-          <span className="text-white">{lng.toFixed(4)}°</span>
+          <span className="text-[#1A1F36]">{lng.toFixed(4)}°</span>
         </div>
         <div>
           <span className="text-gray-500">ICAO </span>
-          <span className="text-white">{icao}</span>
+          <span className="text-[#1A1F36]">{icao}</span>
         </div>
       </div>
     </div>
